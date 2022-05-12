@@ -1,9 +1,14 @@
 import { createWebHistory, createRouter } from 'vue-router';
 import CustomerPage from './components/CustomerPage.vue';
+import Owner from './components/Owner.vue';
 const routes = [
   {
     path: '/Customer/:id',
     component: CustomerPage,
+  },
+  {
+    path: '/Owner',
+    component: Owner,
   },
   //   {
   //     path: '/404',

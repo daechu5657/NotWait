@@ -6,12 +6,62 @@ var cors = require('cors');
 app.use(cors());
 const http = require('http').createServer(app);
 
-http.listen(8080, function () {
-  console.log('listening on 8080');
-});
-
 app.use(express.static(path.join(__dirname, 'notwait/dist')));
 
-app.get('*', function (요청, 응답) {
-  응답.sendFile(path.join(__dirname, '/notwait/dist/index.html'));
-});
+const MongoClient = require('mongodb').MongoClient;
+var db;
+MongoClient.connect(
+  'mongodb+srv://kimdaeho5657:rlaeogh5657@cluster0.bxeux.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+  { useUnifiedTopology: true },
+  function (에러, client) {
+    if (에러) return console.log(에러);
+
+    db = client.db('notwait');
+    app.listen('8080', function () {
+      console.log('listening on 8080');
+    });
+    app.get('*', function (요청, 응답) {
+      응답.sendFile(path.join(__dirname, '/notwait/dist/index.html'));
+    });
+    app.post('/Login', function (요청, 응답) {
+      db.collection('code')
+        .find({ _id: 요청.body.code })
+        .toArray()
+        .then(data => {
+          if (data.length === 0) {
+            응답.send('틀려유');
+          } else if (data[0].onoff == 1) {
+            db.collection('menu')
+              .find({ _id: 요청.body.code })
+              .toArray()
+              .then(a => {
+                응답.send(a);
+              });
+          } else {
+            응답.send('돈내야지');
+          }
+        });
+    });
+    app.post('/Menuset', function (요청, 응답) {
+      db.collection('menu').updateOne(
+        {
+          _id: '1234',
+        },
+        {
+          $set: {
+            menu: 요청.body,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          db.collection('menu')
+            .find({ _id: '1234' })
+            .toArray()
+            .then(a => {
+              응답.send(a);
+            });
+        }
+      );
+    });
+  }
+);

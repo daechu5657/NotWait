@@ -4,39 +4,69 @@
     <div class="list">
       <div class="menu-list">
         <p>메뉴판</p>
-        <div class="menu-list-top">
-          <p>메뉴1 닭볶음탕 16000원</p>
-          <button>담기</button>
+        <div class="menu-list-top" @click="menuon">
+          <span>메뉴1 닭볶음탕 16000원</span>
         </div>
         <div class="menu-list-bottom">
-          <div class="menu-list-bottom-basket"></div>
+          <div class="menu-list-bottom-basket">
+            <span>음식명</span>
+            <input type="text" name="" placeholder="수량" />
+            <button>삭제</button>
+          </div>
+          <button>장바구니 초기화</button>
           <button>주문</button>
         </div>
       </div>
       <div class="bill-list">
-        <div class="bill-list-top">계산서</div>
+        <div class="bill-list-top" @click="billon">계산서</div>
         <div class="bill-list-middle">주문내역</div>
         <div class="bill-list-bottom">총금액</div>
       </div>
     </div>
     <div class="counter">
-      <div class="talk-counter"></div>
-      <div class="call-counter"></div>
+      <div class="talk-counter">요청사항</div>
+      <div class="call-counter">호출</div>
     </div>
+    <CustomerModal
+      :modal="modal"
+      :menu="menu"
+      :bill="bill"
+      @modaloff="modaloff"
+    />
   </div>
 </template>
 
 <script>
 let vh = window.innerHeight * 0.01;
-
 document.documentElement.style.setProperty('--vh', `${vh}px`);
+import CustomerModal from './CustomerModal.vue';
+
 export default {
+  components: { CustomerModal },
   data() {
     return {
       modal: 0,
       menu: 0,
       bill: 0,
     };
+  },
+  component: {
+    CustomerModal: CustomerModal,
+  },
+  methods: {
+    menuon() {
+      this.menu = 1;
+      this.modal = 1;
+    },
+    billon() {
+      this.bill = 1;
+      this.modal = 1;
+    },
+    modaloff() {
+      this.modal = 0;
+      this.bill = 0;
+      this.menu = 0;
+    },
   },
 };
 </script>
@@ -67,27 +97,52 @@ export default {
   justify-content: space-around;
 }
 .menu-list {
-  width: 20vw;
+  width: 40vw;
   height: calc(var(--vh, 1vh) * 80);
   border: 1px solid;
   position: relative;
   left: 5.5px;
-}
-.menu-list-top {
-  width: 5vw;
-  height: calc(var(--vh, 1vh) * 70);
-  border: 1px solid;
-  /* margin: 1vh 0; */
-  left: 20px;
-  position: relative;
 }
 .menu-list > p {
   width: 100%;
   height: calc(var(--vh, 1vh) * 2);
   border: 1px solid;
 }
+.menu-list-top {
+  width: 40vw;
+  height: calc(var(--vh, 1vh) * 40);
+  border: 1px solid;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-list-top > span {
+  height: calc(var(--vh, 1vh) * 2);
+  font-size: 3vw;
+}
+
+.menu-list-bottom-basket {
+  height: calc(var(--vh, 1vh) * 35);
+  width: inherit;
+  border: 1px solid;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.menu-list-bottom-basket > span {
+  height: calc(var(--vh, 1vh) * 2);
+}
+.menu-list-bottom-basket > input {
+  width: 7vw;
+  height: calc(var(--vh, 1vh) * 2);
+}
+.menu-list-bottom-basket > button {
+  height: calc(var(--vh, 1vh) * 2);
+}
+
 .bill-list {
-  width: 20vw;
+  width: 40vw;
   height: calc(var(--vh, 1vh) * 80);
   border: 1px solid;
   position: relative;
@@ -112,7 +167,9 @@ export default {
 .counter {
   width: 100%;
   height: calc(var(--vh, 1vh) * 15);
-  /* margin: 1--vh 0; */
   border: 1px solid;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 </style>
