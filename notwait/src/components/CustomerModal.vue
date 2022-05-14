@@ -1,22 +1,26 @@
 <template>
-  <div class="CustomerModal-wrap" v-if="modal == 1">
-    <div class="CustomerModal-wrap-top"></div>
-    <div class="CustomerModal-wrap-bottom" @click="xbtn"></div>
+  <div class="CustomerModal-wrap" v-if="$store.state.customer_modal == 1">
+    <div class="CustomerModal-wrap-top">
+      <p>1{{ $store.state.menulist }}</p>
+      <div
+        class="CustomerModal-wrap-top-menulist"
+        v-for="(a, i) in $store.state.menulist"
+        :key="i"
+      >
+        <p>{{ $store.state.menulist[i].menuname }}</p>
+        <p>{{ $store.state.menulist[i].price }}</p>
+      </div>
+    </div>
+    <div
+      class="CustomerModal-wrap-bottom"
+      @click="$store.commit('customer_modalOnOff', 'close')"
+    ></div>
   </div>
 </template>
 
 <script>
 export default {
-  methods: {
-    xbtn() {
-      this.$emit('modaloff');
-    },
-  },
-  props: {
-    modal: Number,
-    menu: Number,
-    bill: Number,
-  },
+  methods: {},
 };
 </script>
 
@@ -30,6 +34,7 @@ export default {
 .CustomerModal-wrap-top {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 80);
+  background-color: cadetblue;
 }
 .CustomerModal-wrap-bottom {
   position: relative;

@@ -4,7 +4,10 @@
     <div class="list">
       <div class="menu-list">
         <p>메뉴판</p>
-        <div class="menu-list-top" @click="menuon">
+        <div
+          class="menu-list-top"
+          @click="$store.commit('customer_modalOnOff', 'menu')"
+        >
           <span>메뉴1 닭볶음탕 16000원</span>
         </div>
         <div class="menu-list-bottom">
@@ -18,7 +21,12 @@
         </div>
       </div>
       <div class="bill-list">
-        <div class="bill-list-top" @click="billon">계산서</div>
+        <div
+          class="bill-list-top"
+          @click="$store.commit('customer_modalOnOff', 'bill')"
+        >
+          계산서
+        </div>
         <div class="bill-list-middle">주문내역</div>
         <div class="bill-list-bottom">총금액</div>
       </div>
@@ -27,12 +35,7 @@
       <div class="talk-counter">요청사항</div>
       <div class="call-counter">호출</div>
     </div>
-    <CustomerModal
-      :modal="modal"
-      :menu="menu"
-      :bill="bill"
-      @modaloff="modaloff"
-    />
+    <CustomerModal />
   </div>
 </template>
 
@@ -44,30 +47,12 @@ import CustomerModal from './CustomerModal.vue';
 export default {
   components: { CustomerModal },
   data() {
-    return {
-      modal: 0,
-      menu: 0,
-      bill: 0,
-    };
+    return {};
   },
   component: {
     CustomerModal: CustomerModal,
   },
-  methods: {
-    menuon() {
-      this.menu = 1;
-      this.modal = 1;
-    },
-    billon() {
-      this.bill = 1;
-      this.modal = 1;
-    },
-    modaloff() {
-      this.modal = 0;
-      this.bill = 0;
-      this.menu = 0;
-    },
-  },
+  methods: {},
 };
 </script>
 

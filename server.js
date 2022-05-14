@@ -31,11 +31,19 @@ MongoClient.connect(
           if (data.length === 0) {
             응답.send('틀려유');
           } else if (data[0].onoff == 1) {
+            var b = [];
             db.collection('menu')
               .find({ _id: 요청.body.code })
               .toArray()
               .then(a => {
-                응답.send(a);
+                b.push(a[0]);
+              });
+            db.collection('table')
+              .find({ _id: 요청.body.code })
+              .toArray()
+              .then(a => {
+                b.push(a[0]);
+                응답.send(b);
               });
           } else {
             응답.send('돈내야지');
@@ -55,6 +63,27 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           db.collection('menu')
+            .find({ _id: '1234' })
+            .toArray()
+            .then(a => {
+              응답.send(a);
+            });
+        }
+      );
+    });
+    app.post('/Tableupdate', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+        },
+        {
+          $set: {
+            table: 요청.body,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          db.collection('table')
             .find({ _id: '1234' })
             .toArray()
             .then(a => {

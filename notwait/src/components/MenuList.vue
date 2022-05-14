@@ -24,7 +24,7 @@
     <div class="MenuList-btn">
       <span @click="push">추가</span>
       <span @click="modify">수정</span>
-      <span>닫기</span>
+      <span @click="$store.commit('menulist_modalOnOff')">닫기</span>
     </div>
   </div>
 </template>
