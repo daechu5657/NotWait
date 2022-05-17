@@ -32,10 +32,13 @@
       </div>
     </div>
     <div class="counter">
-      <div class="talk-counter">요청사항</div>
+      <div class="talk-counter" @click="$store.commit('talk_modalOnOff', 1)">
+        요청사항
+      </div>
       <div class="call-counter">호출</div>
     </div>
     <CustomerModal />
+    <CustomerTalk />
   </div>
 </template>
 
@@ -43,16 +46,25 @@
 let vh = window.innerHeight * 0.01;
 document.documentElement.style.setProperty('--vh', `${vh}px`);
 import CustomerModal from './CustomerModal.vue';
-
+import CustomerTalk from './CustomerTalk.vue';
+// import axios from 'axios';
 export default {
-  components: { CustomerModal },
   data() {
     return {};
   },
-  component: {
+  components: {
     CustomerModal: CustomerModal,
+    CustomerTalk: CustomerTalk,
   },
   methods: {},
+  created() {
+    this.$store.dispatch('customer_login', this.$route.params.id);
+    this.$store.dispatch('owner_customer_update', this.$route.params.id);
+    // var eventSource = new EventSource(`/Sync/${this.$route.params.id}`);
+    // eventSource.addEventListener('test', function (e) {
+    //   console.log(JSON.parse(e.data));
+    // });
+  },
 };
 </script>
 

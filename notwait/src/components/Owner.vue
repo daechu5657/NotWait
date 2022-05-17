@@ -2,23 +2,50 @@
   <div class="Owner-wrap">
     <div class="Owner-top">
       <div class="Owner-top-table">
+        <p>테이블</p>
         <div
           class="Owner-top-table-repeat"
-          v-bind:id="'box' + (i + 1)"
+          v-bind:id="'box' + (index + 1)"
+          v-for="(a, index) in $store.state.table"
+          :key="index"
+          @mousedown="move(index)"
+        >
+          {{ index + 1 }}번
+        </div>
+      </div>
+      <div class="Owner-top-btn">
+        <span
+          @click="
+            $store.dispatch('table_update', {
+              value: 0,
+              index: $store.state.table.length,
+            })
+          "
+          >좌석제거</span
+        >
+        <span
+          @click="
+            $store.dispatch('table_update', {
+              value: 1,
+              index: $store.state.table.length,
+            })
+          "
+          >좌석늘리기</span
+        >
+      </div>
+    </div>
+    <div class="Owner-bottom">
+      <div class="Owner-bottom-communication">
+        <p>실시간소통</p>
+        <div
+          class="Owner-bottom-communication-repeat"
           v-for="(a, i) in $store.state.table"
           :key="i"
-          @mousedown="move(i)"
+          @click="$store.commit('talk_modalOnOff', i)"
         >
           {{ i + 1 }}번
         </div>
       </div>
-      <div class="Owner-top-btn">
-        <span @click="$store.dispatch('table_update', 0)">좌석제거</span>
-        <span @click="$store.dispatch('table_update', 1)">좌석늘리기</span>
-      </div>
-    </div>
-    <div class="Owner-bottom">
-      <div class="Owner-bottom-communication">실시간소통</div>
       <div class="Owner-bottom-cancel">주문취소건</div>
       <div class="Owner-bottom-btn">
         <span @click="$store.commit('menulist_modalOnOff')">메뉴판설정</span>
@@ -27,19 +54,24 @@
     </div>
     <MenuList />
     <Code />
+    <Talk />
   </div>
 </template>
 
 <script>
 import MenuList from './MenuList.vue';
 import Code from './Code.vue';
+import Talk from './Talk.vue';
 export default {
   data() {
-    return {};
+    return {
+      index: 0,
+    };
   },
   components: {
     MenuList: MenuList,
     Code: Code,
+    Talk: Talk,
   },
   props: {},
   methods: {
@@ -102,10 +134,13 @@ export default {
   left: 1vw;
   top: 1vh;
 }
-
+.Owner-top-table > p {
+  position: absolute;
+  left: 48vw;
+}
 .Owner-top-table-repeat {
-  width: 100px;
-  height: 100px;
+  width: 5vw;
+  height: 5vw;
   background-color: #7fffd44d;
   border-radius: 50%;
   text-align: center;
@@ -138,6 +173,20 @@ export default {
   left: 1vw;
   top: 1vh;
   border: 1px solid;
+  display: flex;
+  flex-direction: row;
+}
+.Owner-bottom-communication > p {
+  position: absolute;
+  left: 48vw;
+}
+.Owner-bottom-communication-repeat {
+  position: relative;
+  width: 5vw;
+  height: 5vw;
+  background-color: #ffebcd8f;
+  border-radius: 50%;
+  text-align: center;
 }
 .Owner-bottom-cancel {
   position: relative;

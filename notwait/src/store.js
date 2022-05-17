@@ -13,6 +13,8 @@ const store = createStore({
       customer_modal: 0,
       menulist_modal: 0,
       login_modal: 0,
+      talk_modal: 0,
+      talk_index: 0,
     };
   },
   mutations: {
@@ -28,25 +30,22 @@ const store = createStore({
         state.code = payload.data[0]._id;
         state.menulist = payload.data[0].menu;
         state.table = payload.data[1].table;
+
         //modal
         state.login_modal = 1;
       }
     },
+    customerlogin(state, payload) {
+      state.menulist = payload.data[0];
+      state.table = payload.data[1];
+    },
+    //modal
     menulist_modalOnOff(state) {
       if (state.menulist_modal == 1) {
         state.menulist_modal = 0;
       } else {
         state.menulist_modal = 1;
       }
-    },
-    table_sync(state, payload) {
-      state.table = payload;
-    },
-    table_push(state) {
-      state.table.push({ orderlist: [] });
-    },
-    table_del(state) {
-      state.table.pop();
     },
     customer_modalOnOff(state, payload) {
       if (payload == 'menu') {
@@ -61,11 +60,37 @@ const store = createStore({
         state.customer_modal = 0;
       }
     },
+    talk_modalOnOff(state, payload) {
+      if (payload != undefined) {
+        state.talk_index = payload;
+      }
+      if (state.talk_modal == 1) {
+        state.talk_modal = 0;
+      } else {
+        state.talk_modal = 1;
+      }
+    },
+    table_push(state, payload) {
+      state.table.push({ orderlist: [], talk: [], index: payload });
+    },
+    table_del(state) {
+      state.table.pop();
+    },
+    //sync
+    menulistSync(state, payload) {
+      state.menulist = payload;
+    },
+    table_sync(state, payload) {
+      state.table = payload;
+    },
+    talk_sync(state, payload) {
+      state.table.talk.push(payload[0]);
+    },
   },
   actions: {
     table_update(context, payload) {
-      if (payload == 1) {
-        context.commit('table_push');
+      if (payload.value == 1) {
+        context.commit('table_push', payload.index);
         axios.post('/Tableupdate', context.state.table).then(response => {
           context.commit('table_sync', response.data[0].table);
         });
@@ -75,6 +100,33 @@ const store = createStore({
           context.commit('table_sync', response.data[0].table);
         });
       }
+    },
+    customer_login(context, payload) {
+      axios
+        .post('/LoginCustomer', { code: '1234', table: payload })
+        .then(response => {
+          context.commit('customerlogin', response);
+        });
+    },
+    talk_update(context, payload) {
+      var send;
+      send = { text: payload, index: this.state.talk_index };
+      axios.post('/Talkupdate', send).then(response => {
+        context.commit('table_sync', response.data[0].table);
+      });
+    },
+    owner_customer_update(context, payload) {
+      var eventSource = new EventSource(`/Sync/${payload}`);
+      eventSource.addEventListener('test', function (e) {
+        var 문서 = JSON.parse(e.data);
+        if (Object.keys(문서) == 'menu') {
+          context.commit('menulistSync', 문서.menu);
+        } else if (Object.keys(문서) === 'table') {
+          context.commit('table_sync', 문서.table);
+        } else {
+          context.commit('talk_sync', Object.values(문서));
+        }
+      });
     },
   },
 });

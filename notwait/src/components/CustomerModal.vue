@@ -1,7 +1,9 @@
 <template>
   <div class="CustomerModal-wrap" v-if="$store.state.customer_modal == 1">
-    <div class="CustomerModal-wrap-top">
-      <p>1{{ $store.state.menulist }}</p>
+    <div
+      class="CustomerModal-wrap-top-m"
+      v-if="$store.state.customer_menu == 1"
+    >
       <div
         class="CustomerModal-wrap-top-menulist"
         v-for="(a, i) in $store.state.menulist"
@@ -9,6 +11,18 @@
       >
         <p>{{ $store.state.menulist[i].menuname }}</p>
         <p>{{ $store.state.menulist[i].price }}</p>
+      </div>
+    </div>
+    <div
+      class="CustomerModal-wrap-top-t"
+      v-if="$store.state.customer_bill == 1"
+    >
+      <div
+        class="CustomerModal-wrap-top-table"
+        v-for="(a, i) in $store.state.table.orderlist"
+        :key="i"
+      >
+        <p>{{ $store.state.table.orderlist[i] }}</p>
       </div>
     </div>
     <div
@@ -31,7 +45,12 @@ export default {
   position: absolute;
   top: calc(var(--vh, 1vh) * 5);
 }
-.CustomerModal-wrap-top {
+.CustomerModal-wrap-top-m {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 80);
+  background-color: cadetblue;
+}
+.CustomerModal-wrap-top-t {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 80);
   background-color: cadetblue;

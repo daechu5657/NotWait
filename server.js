@@ -3,6 +3,7 @@ const path = require('path');
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 var cors = require('cors');
+const { json } = require('express/lib/response');
 app.use(cors());
 const http = require('http').createServer(app);
 
@@ -20,7 +21,10 @@ MongoClient.connect(
     app.listen('8080', function () {
       console.log('listening on 8080');
     });
-    app.get('*', function (요청, 응답) {
+    app.get('/Customer/:id', function (요청, 응답) {
+      응답.sendFile(path.join(__dirname, '/notwait/dist/index.html'));
+    });
+    app.get('/Owner', function (요청, 응답) {
       응답.sendFile(path.join(__dirname, '/notwait/dist/index.html'));
     });
     app.post('/Login', function (요청, 응답) {
@@ -48,6 +52,27 @@ MongoClient.connect(
           } else {
             응답.send('돈내야지');
           }
+        });
+    });
+    app.post('/LoginCustomer', function (요청, 응답) {
+      db.collection('code')
+        .find({ _id: 요청.body.code })
+        .toArray()
+        .then(data => {
+          var b = [];
+          db.collection('menu')
+            .find({ _id: 요청.body.code })
+            .toArray()
+            .then(a => {
+              b.push(a[0].menu);
+            });
+          db.collection('table')
+            .find({ _id: 요청.body.code })
+            .toArray()
+            .then(a => {
+              b.push(a[0].table[요청.body.table - 1]);
+              응답.send(b);
+            });
         });
     });
     app.post('/Menuset', function (요청, 응답) {
@@ -92,5 +117,74 @@ MongoClient.connect(
         }
       );
     });
+    app.post('/Talkupdate', function (요청, 응답) {
+      var obj = {};
+      obj[`table.${요청.body.index}.talk`] = 요청.body.text;
+      if (요청.body.text != '') {
+        db.collection('table').updateOne(
+          {
+            _id: '1234',
+          },
+          {
+            $push: obj,
+          },
+          { upsert: true },
+          function (에러, 결과) {
+            db.collection('table')
+              .find({ _id: '1234' })
+              .toArray()
+              .then(a => {
+                응답.send(a);
+              });
+          }
+        );
+      }
+    });
+    app.get('/Sync/:id', function (요청, res) {
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      });
+      var 문서;
+      const menu = db.collection('menu').watch();
+      menu.on('change', result => {
+        문서 = result.updateDescription.updatedFields;
+        res.write('event: test\n');
+        res.write(`data: ${JSON.stringify(문서)}\n\n`);
+      });
+      // var 문서1;
+      // const table = db.collection('table').watch();
+      // table.on('change', result => {
+      //   문서1 = result.updateDescription.updatedFields;
+      //   res.write('event: test\n');
+      //   res.write(`data: ${JSON.stringify(문서1)}\n\n`);
+      // });
+
+      var 문서2;
+      const talk = db.collection('table').watch();
+      talk.on('change', result => {
+        문서2 = result.updateDescription.updatedFields;
+        var n = Object.keys(문서2).toString();
+        let num = Number(n.substr(6, 1));
+        if (요청.params.id == num + 1) {
+          res.write('event: test\n');
+          res.write(`data: ${JSON.stringify(문서2)}\n\n`);
+        }
+      });
+
+      // const pipeline = [
+      //   { $match: { 'fullDocument.participants': socket.uid } },
+      // ];
+
+      // var 문서2;
+      // const talk = db.collection('table').watch(pipeline);
+      // talk.on('change', result => {
+      //   문서2 = result
+      //   res.write('event: test\n');
+      //   res.write(`data: ${JSON.stringify(문서2)}\n\n`);
+      // });
+    });
+    //owner=>customer 방향 싱크 반대방향싱크도 만들어야함(owner 수신이 필요함)
   }
 );
