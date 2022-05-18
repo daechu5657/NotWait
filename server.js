@@ -186,5 +186,54 @@ MongoClient.connect(
       // });
     });
     //owner=>customer 방향 싱크 반대방향싱크도 만들어야함(owner 수신이 필요함)
+    app.post('/Orderlist', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+          'table.index': 요청.body.index - 1,
+        },
+        {
+          $push: {
+            'table.$.orderlist': {
+              $each: 요청.body.payload,
+            },
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          db.collection('table')
+            .find({ _id: '1234' })
+            .toArray()
+            .then(a => {
+              응답.send(a);
+            });
+        }
+      );
+    });
+    app.post('/Review', function (요청, 응답) {
+      db.collection('menu').updateOne(
+        {
+          _id: '1234',
+          'menu.menuname': 요청.body.menuname,
+        },
+        {
+          $push: {
+            'menu.$.review': {
+              text: 요청.body.text,
+              value: 요청.body.value,
+            },
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          db.collection('menu')
+            .find({ _id: '1234' })
+            .toArray()
+            .then(a => {
+              응답.send(a);
+            });
+        }
+      );
+    });
   }
 );

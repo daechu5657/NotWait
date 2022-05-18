@@ -15,9 +15,15 @@ export default {
   },
   methods: {
     submit() {
-      axios.post('/Login', { code: this.send }).then(response => {
-        this.$store.commit('login', response);
-      });
+      axios
+        .post(
+          '/Login',
+          { code: this.send },
+          { maxContentLength: 100000000, maxBodyLength: 1000000000 }
+        )
+        .then(response => {
+          this.$store.commit('login', response);
+        });
     },
   },
 };

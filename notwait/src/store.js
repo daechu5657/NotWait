@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
+//
 
 const store = createStore({
   state() {
@@ -14,7 +15,13 @@ const store = createStore({
       menulist_modal: 0,
       login_modal: 0,
       talk_modal: 0,
+      event_modal: 0,
+      event_text: '',
+      review_modal: 0,
+      review_index: 0,
+      //index
       talk_index: 0,
+      customer_id: 0,
     };
   },
   mutations: {
@@ -76,7 +83,28 @@ const store = createStore({
     table_del(state) {
       state.table.pop();
     },
+    event_modalOnOff(state, payload) {
+      if (state.event_modal == 1) {
+        state.event_modal = 0;
+      } else {
+        state.event_text = payload;
+        state.event_modal = 1;
+      }
+    },
+    review_modalOnOff(state, payload) {
+      if (payload != undefined) {
+        state.review_index = payload;
+      }
+      if (state.review_modal == 1) {
+        state.review_modal = 0;
+      } else {
+        state.review_modal = 1;
+      }
+    },
     //sync
+    customer_idsync(state, payload) {
+      state.customer_id = payload;
+    },
     menulistSync(state, payload) {
       state.menulist = payload;
     },
@@ -103,9 +131,17 @@ const store = createStore({
     },
     customer_login(context, payload) {
       axios
-        .post('/LoginCustomer', { code: '1234', table: payload })
+        .post(
+          '/LoginCustomer',
+          { code: '1234', table: payload },
+          { maxContentLength: 100000000, maxBodyLength: 1000000000 }
+        )
         .then(response => {
-          context.commit('customerlogin', response);
+          if (response.data.length < 2) {
+            context.commit('event_modalOnOff', '재접속바랍니다');
+          } else {
+            context.commit('customerlogin', response);
+          }
         });
     },
     talk_update(context, payload) {
@@ -115,7 +151,25 @@ const store = createStore({
         context.commit('table_sync', response.data[0].table);
       });
     },
+    orderlist_update(context, payload) {
+      var send = { index: this.state.customer_id, payload: payload };
+      axios.post('/Orderlist', send).then(response => {
+        context.commit(
+          'table_sync',
+          response.data[0].table[this.state.customer_id - 1]
+        );
+      });
+    },
+    review_update(context, payload) {
+      console.log(payload);
+      axios.post('/Review', payload).then(response => {
+        console.log(response);
+        context.commit('menulistSync', response.data[0].menu);
+      });
+    },
     owner_customer_update(context, payload) {
+      console.log('실시간업데이트');
+      context.commit('customer_idsync', payload);
       var eventSource = new EventSource(`/Sync/${payload}`);
       eventSource.addEventListener('test', function (e) {
         var 문서 = JSON.parse(e.data);
