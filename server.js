@@ -47,7 +47,9 @@ MongoClient.connect(
               .toArray()
               .then(a => {
                 b.push(a[0]);
-                응답.send(b);
+                setTimeout(() => {
+                  응답.send(b);
+                }, 500);
               });
           } else {
             응답.send('돈내야지');
@@ -71,7 +73,9 @@ MongoClient.connect(
             .toArray()
             .then(a => {
               b.push(a[0].table[요청.body.table - 1]);
-              응답.send(b);
+              setTimeout(() => {
+                응답.send(b);
+              }, 500);
             });
         });
     });
