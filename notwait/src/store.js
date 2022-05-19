@@ -19,9 +19,12 @@ const store = createStore({
       event_text: '',
       review_modal: 0,
       review_index: 0,
+      loading_modal: 1,
       //index
       talk_index: 0,
       customer_id: 0,
+      //etc
+      percentage: 0,
     };
   },
   mutations: {
@@ -101,6 +104,14 @@ const store = createStore({
         state.review_modal = 1;
       }
     },
+    login_percentage(state, payload) {
+      state.percentage = payload;
+    },
+    loading_modalOnOff(state) {
+      if (state.percentage == 100) {
+        state.loading_modal = 0;
+      }
+    },
     //sync
     customer_idsync(state, payload) {
       state.customer_id = payload;
@@ -134,7 +145,14 @@ const store = createStore({
         .post(
           '/LoginCustomer',
           { code: '1234', table: payload },
-          { maxContentLength: 100000000, maxBodyLength: 1000000000 }
+          {
+            onDownloadProgress: ProgressEvent => {
+              let percentage =
+                (ProgressEvent.loaded * 100) / ProgressEvent.total;
+              let percentcompleted = Math.round(percentage);
+              context.commit('login_percentage', percentcompleted);
+            },
+          }
         )
         .then(response => {
           if (response.data.length < 2) {

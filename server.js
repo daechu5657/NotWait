@@ -46,8 +46,8 @@ MongoClient.connect(
               .find({ _id: 요청.body.code })
               .toArray()
               .then(a => {
-                b.push(a[0]);
                 setTimeout(() => {
+                  b.push(a[0]);
                   응답.send(b);
                 }, 500);
               });
@@ -72,8 +72,8 @@ MongoClient.connect(
             .find({ _id: 요청.body.code })
             .toArray()
             .then(a => {
-              b.push(a[0].table[요청.body.table - 1]);
               setTimeout(() => {
+                b.push(a[0].table[요청.body.table - 1]);
                 응답.send(b);
               }, 500);
             });

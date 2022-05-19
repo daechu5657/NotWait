@@ -1,28 +1,39 @@
 <template>
   <div class="wrap">
-    <div class="table-number">{{ $route.params.id }}번테이블</div>
-    <div class="list">
-      <div class="menu-list">
-        <p @click="$store.commit('customer_modalOnOff', 'menu')">메뉴판</p>
+    <div class="top-contents">
+      <div class="top-name">#Dalha_min</div>
+      <div class="table-number">Table &nbsp;{{ $route.params.id }}</div>
+    </div>
+    <div class="top-contents-sub">
+      <div class="sub-text">
+        Welcome to #Dalha_min <br />
+        Your special sweet day
       </div>
-      <div class="bill-list">
-        <div
-          class="bill-list-top"
-          @click="$store.commit('customer_modalOnOff', 'bill')"
-        >
-          주문내역
+      <div class="insta"></div>
+    </div>
+    <div class="mid-contents-wrap">
+      <div class="contents-1">
+        <div class="menu-list">
+          <p @click="$store.commit('customer_modalOnOff', 'menu')">Menu</p>
+        </div>
+        <div class="bill-list">
+          <p @click="$store.commit('customer_modalOnOff', 'bill')">OrderList</p>
         </div>
       </div>
-    </div>
-    <div class="counter">
-      <div class="talk-counter" @click="$store.commit('talk_modalOnOff', 1)">
-        요청사항
+      <div class="contents-2">
+        <div class="talk" @click="$store.commit('talk_modalOnOff', 1)">
+          <p>Talk</p>
+        </div>
+        <div class="call"><p>Call</p></div>
       </div>
-      <div class="call-counter">호출</div>
     </div>
+
     <CustomerModal />
     <CustomerTalk />
     <EventModal />
+    <transition name="loading">
+      <Loading />
+    </transition>
   </div>
 </template>
 
@@ -32,6 +43,7 @@ document.documentElement.style.setProperty('--vh', `${vh}px`);
 import CustomerModal from './CustomerModal.vue';
 import CustomerTalk from './CustomerTalk.vue';
 import EventModal from './EventModal.vue';
+import Loading from './Loading.vue';
 // import axios from 'axios';
 export default {
   data() {
@@ -41,6 +53,7 @@ export default {
     CustomerModal: CustomerModal,
     CustomerTalk: CustomerTalk,
     EventModal: EventModal,
+    Loading: Loading,
   },
   methods: {},
   created() {
@@ -53,62 +66,148 @@ export default {
 <style>
 .wrap {
   width: 100vw;
-  background-color: #898989;
+  background-color: #f0f0f0;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   height: calc(var(--vh, 1vh) * 100);
 }
-.table-number {
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 5);
-  border: 1px solid;
-  /* margin: 1--vh 0; */
-  text-align: center;
-  line-height: calc(var(--vh, 1vh) * 5);
-}
-.list {
-  position: relative;
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 80);
+.top-contents {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-}
-.menu-list {
-  width: 40vw;
-  height: calc(var(--vh, 1vh) * 80);
+  justify-content: space-between;
+  padding: 0px 5vw;
+  top: calc(var(--vh, 1vh) * 2);
   position: relative;
-  left: 5.5px;
+  letter-spacing: 0.25vw;
 }
-.menu-list > p {
-  width: 100%;
-  height: calc(var(--vh, 1vh) * 2);
-  border: 1px solid;
+.top-name {
+  position: relative;
+  text-align: center;
+  font-size: 4vw;
+  font-weight: 700;
+}
+.table-number {
+  position: relative;
+  text-align: center;
+  font-size: 2.5vw;
+  font-weight: 300;
+  line-height: 5.5vw;
 }
 
-.menu-list-top > span {
-  height: calc(var(--vh, 1vh) * 2);
-  font-size: 3vw;
+.top-contents-sub {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  top: calc(var(--vh, 1vh) * 8);
+  position: relative;
+  line-height: calc(var(--vh, 1vh) * 2.5);
+}
+
+.sub-text {
+  font-size: 2.5vw;
+  font-weight: 300;
+  letter-spacing: 0.1vw;
+  text-align: right;
+  padding-right: 8vw;
+}
+.insta {
+  width: calc(var(--vh, 1vh) * 15);
+  height: calc(var(--vh, 1vh) * 7);
+  background-color: rgb(61, 82, 156);
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+    rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
+  border-radius: 20px;
+}
+
+.mid-contents-wrap {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 50);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  top: calc(var(--vh, 1vh) * 12);
+}
+.contents-1 {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.menu-list {
+  width: calc(var(--vh, 1vh) * 14);
+  height: calc(var(--vh, 1vh) * 14);
+  position: relative;
+  background-color: #e0e0e0;
+  box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
+    rgb(9 30 66 / 8%) 0px 0px 0px 1px;
+  border-radius: 24px;
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 14);
+}
+
+.menu-list > p {
+  width: 100%;
+  height: 100%;
+  font-weight: 700;
 }
 
 .bill-list {
-  width: 40vw;
-  height: calc(var(--vh, 1vh) * 80);
+  width: calc(var(--vh, 1vh) * 14);
+  height: calc(var(--vh, 1vh) * 14);
   position: relative;
-  right: 5.5px;
+  background-color: #e0e0e0;
+  box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
+    rgb(9 30 66 / 8%) 0px 0px 0px 1px;
+  border-radius: 24px;
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 14);
 }
-.bill-list-top {
-  width: inherit;
-  height: calc(var(--vh, 1vh) * 6);
-  border: 1px solid;
-}
-.counter {
+.bill-list > p {
   width: 100%;
-  height: calc(var(--vh, 1vh) * 15);
-  border: 1px solid;
+  height: 100%;
+  font-weight: 700;
+}
+.contents-2 {
+  position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-evenly;
+}
+.talk {
+  width: calc(var(--vh, 1vh) * 14);
+  height: calc(var(--vh, 1vh) * 14);
+  position: relative;
+  background-color: #e0e0e0;
+  box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
+    rgb(9 30 66 / 8%) 0px 0px 0px 1px;
+  border-radius: 24px;
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 14);
+}
+
+.talk > p {
+  width: 100%;
+  height: 100%;
+  font-weight: 700;
+}
+
+.call {
+  width: calc(var(--vh, 1vh) * 14);
+  height: calc(var(--vh, 1vh) * 14);
+  position: relative;
+  background-color: #e0e0e0;
+  box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
+    rgb(9 30 66 / 8%) 0px 0px 0px 1px;
+  border-radius: 24px;
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 14);
+}
+.call > p {
+  width: 100%;
+  height: 100%;
+  font-weight: 700;
 }
 </style>

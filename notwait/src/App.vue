@@ -14,6 +14,7 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca&display=swap');
 * {
   margin: 0;
   padding: 0;
@@ -28,6 +29,8 @@ body {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  color: #21211f;
+  font-family: 'Lexend Deca', sans-serif;
   /* width: 100vw;
   height: calc(var(--vh, 100vh) * 100); */
   /* overflow: hidden; */
@@ -37,6 +40,5 @@ body {
 .base-frame {
   width: 100vw;
   height: calc(var(--vh, 100vh) * 100);
-  background-color: #2b2b2b;
 }
 </style>
