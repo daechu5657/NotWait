@@ -1,26 +1,30 @@
 <template>
-  <div class="wrap">
+  <div
+    class="wrap"
+    oncontextmenu="return false"
+    ondragstart="return false"
+    onselectstart="return false"
+  >
     <div class="top-contents">
       <div class="top-name">#Dalha_min</div>
       <div class="table-number">Table &nbsp;{{ $route.params.id }}</div>
     </div>
     <div class="top-contents-sub">
       <div class="sub-text">
-        Welcome to #Dalha_min <br />
+        Welcome<br />
+        To #Dalha_min<br />
         Your special sweet day
       </div>
-      <div class="insta"></div>
+      <a class="insta" href="https://www.instagram.com/dalha_min/"></a>
     </div>
-    <div class="mid-contents-wrap">
-      <div class="contents-1">
+    <div class="contents-slider" ref="slider">
+      <div class="contents-slider-inner" ref="inner" style="left: 0vw">
         <div class="menu-list">
           <p @click="$store.commit('customer_modalOnOff', 'menu')">Menu</p>
         </div>
         <div class="bill-list">
           <p @click="$store.commit('customer_modalOnOff', 'bill')">OrderList</p>
         </div>
-      </div>
-      <div class="contents-2">
         <div class="talk" @click="$store.commit('talk_modalOnOff', 1)">
           <p>Talk</p>
         </div>
@@ -45,6 +49,7 @@ import CustomerTalk from './CustomerTalk.vue';
 import EventModal from './EventModal.vue';
 import Loading from './Loading.vue';
 // import axios from 'axios';
+
 export default {
   data() {
     return {};
@@ -56,6 +61,47 @@ export default {
     Loading: Loading,
   },
   methods: {},
+  mounted() {
+    let slider = this.$refs.slider;
+    let innerslider = this.$refs.inner;
+    let pressed = false;
+    let startx; // eslint-disable-line no-unused-vars
+    let x;
+    let length;
+    let innerleft = 0;
+    slider.addEventListener('touchstart', e => {
+      pressed = true;
+      startx = e.touches[0].screenX - innerslider.offsetLeft;
+      slider.style.cursor = 'grabbing';
+      length = e.touches[0].screenX;
+    });
+    slider.addEventListener('touchend', () => {
+      slider.style.cursor = 'default';
+      pressed = false;
+      if (x - length > 100) {
+        if (innerslider.style.left == '0vw') {
+          return false;
+        } else {
+          console.log(x - length);
+          innerleft += 70;
+          innerslider.style.left = `${innerleft}vw`;
+        }
+      } else if (x - length < -100) {
+        if (innerslider.style.left == '-210vw') {
+          return false;
+        } else {
+          console.log(x - length);
+          innerleft -= 70;
+          innerslider.style.left = `${innerleft}vw`;
+        }
+      }
+    });
+    slider.addEventListener('touchmove', e => {
+      if (!pressed) return;
+      e.preventDefault();
+      x = e.touches[0].screenX;
+    });
+  },
   created() {
     this.$store.dispatch('customer_login', this.$route.params.id);
     this.$store.dispatch('owner_customer_update', this.$route.params.id);
@@ -100,44 +146,59 @@ export default {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  top: calc(var(--vh, 1vh) * 8);
+  top: calc(var(--vh, 1vh) * 7);
   position: relative;
   line-height: calc(var(--vh, 1vh) * 2.5);
 }
 
 .sub-text {
+  position: relative;
   font-size: 2.5vw;
   font-weight: 300;
   letter-spacing: 0.1vw;
   text-align: right;
-  padding-right: 8vw;
+  padding-right: 4vw;
 }
 .insta {
-  width: calc(var(--vh, 1vh) * 15);
-  height: calc(var(--vh, 1vh) * 7);
-  background-color: rgb(61, 82, 156);
+  position: relative;
+  width: 50vw;
+  height: calc(var(--vh, 1vh) * 9);
+  /* background-color: rgb(61, 82, 156); */
   box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
     rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
   border-radius: 20px;
+  background-image: url('../assets/insta.jpg');
+  background-position: 52% 42%;
 }
 
 .mid-contents-wrap {
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 50);
+  height: calc(var(--vh, 1vh) * 37);
   position: absolute;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  top: calc(var(--vh, 1vh) * 12);
+  top: calc(var(--vh, 1vh) * 30);
 }
-.contents-1 {
-  position: relative;
+.contents-slider {
+  position: absolute;
+  overflow: hidden;
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 14);
+  top: calc(var(--vh, 1vh) * 26);
+}
+.contents-slider-inner {
+  position: absolute;
+  top: 0;
+  left: 0vw;
+  width: 300vw;
+  height: 100%;
+  transition: 0.3s ease-in-out;
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
 }
 .menu-list {
-  width: calc(var(--vh, 1vh) * 14);
+  width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
   background-color: #e0e0e0;
@@ -146,6 +207,9 @@ export default {
   border-radius: 24px;
   text-align: center;
   line-height: calc(var(--vh, 1vh) * 14);
+  cursor: pointer;
+  margin-left: 20vw;
+  margin-right: 10vw;
 }
 
 .menu-list > p {
@@ -155,7 +219,7 @@ export default {
 }
 
 .bill-list {
-  width: calc(var(--vh, 1vh) * 14);
+  width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
   background-color: #e0e0e0;
@@ -164,20 +228,16 @@ export default {
   border-radius: 24px;
   text-align: center;
   line-height: calc(var(--vh, 1vh) * 14);
+  cursor: pointer;
+  margin-right: 10vw;
 }
 .bill-list > p {
   width: 100%;
   height: 100%;
   font-weight: 700;
 }
-.contents-2 {
-  position: relative;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-}
 .talk {
-  width: calc(var(--vh, 1vh) * 14);
+  width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
   background-color: #e0e0e0;
@@ -186,6 +246,7 @@ export default {
   border-radius: 24px;
   text-align: center;
   line-height: calc(var(--vh, 1vh) * 14);
+  cursor: pointer;
 }
 
 .talk > p {
@@ -195,7 +256,7 @@ export default {
 }
 
 .call {
-  width: calc(var(--vh, 1vh) * 14);
+  width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
   background-color: #e0e0e0;
@@ -204,6 +265,9 @@ export default {
   border-radius: 24px;
   text-align: center;
   line-height: calc(var(--vh, 1vh) * 14);
+  cursor: pointer;
+  margin-left: 10vw;
+  margin-right: 10vw;
 }
 .call > p {
   width: 100%;
