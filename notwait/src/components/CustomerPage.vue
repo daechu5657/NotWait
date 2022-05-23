@@ -73,33 +73,37 @@ export default {
       pressed = true;
       startx = e.touches[0].screenX - innerslider.offsetLeft;
       slider.style.cursor = 'grabbing';
-      length = e.touches[0].screenX;
+      length = e.touches[0].clientX;
     });
     slider.addEventListener('touchend', () => {
       slider.style.cursor = 'default';
       pressed = false;
-      if (x - length > 100) {
-        if (innerslider.style.left == '0vw') {
-          return false;
-        } else {
-          console.log(x - length);
-          innerleft += 70;
-          innerslider.style.left = `${innerleft}vw`;
-        }
-      } else if (x - length < -100) {
-        if (innerslider.style.left == '-210vw') {
-          return false;
-        } else {
-          console.log(x - length);
-          innerleft -= 70;
-          innerslider.style.left = `${innerleft}vw`;
+      if (x != 0) {
+        if (x - length > 100) {
+          if (parseInt(innerslider.style.left) == 0) {
+            innerslider.style.left = '0vw';
+            x = 0;
+          } else {
+            innerleft += 70;
+            innerslider.style.left = `${innerleft}vw`;
+            x = 0;
+          }
+        } else if (x - length < -100) {
+          if (parseInt(innerslider.style.left) == -210) {
+            innerslider.style.left = '-210vw';
+            x = 0;
+          } else {
+            innerleft -= 70;
+            innerslider.style.left = `${innerleft}vw`;
+            x = 0;
+          }
         }
       }
     });
     slider.addEventListener('touchmove', e => {
       if (!pressed) return;
       e.preventDefault();
-      x = e.touches[0].screenX;
+      x = e.touches[0].clientX;
     });
   },
   created() {
@@ -184,7 +188,7 @@ export default {
   position: absolute;
   overflow: hidden;
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 14);
+  height: calc(var(--vh, 1vh) * 16);
   top: calc(var(--vh, 1vh) * 26);
 }
 .contents-slider-inner {
@@ -193,7 +197,7 @@ export default {
   left: 0vw;
   width: 300vw;
   height: 100%;
-  transition: 0.3s ease-in-out;
+  transition: 0.3s ease;
   display: flex;
   flex-direction: row;
 }
@@ -201,7 +205,9 @@ export default {
   width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
-  background-color: #e0e0e0;
+  background-image: url('../assets/menu.jpg');
+  background-size: cover;
+  background-position: 53% 42%;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
   border-radius: 24px;
@@ -216,13 +222,17 @@ export default {
   width: 100%;
   height: 100%;
   font-weight: 700;
+  color: #ffffffe3;
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
 }
 
 .bill-list {
   width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
-  background-color: #e0e0e0;
+  background-image: url('../assets/orderlist.jpg');
+  background-size: cover;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
   border-radius: 24px;
@@ -235,12 +245,16 @@ export default {
   width: 100%;
   height: 100%;
   font-weight: 700;
+  color: #ffffffe3;
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
 }
 .talk {
   width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
-  background-color: #e0e0e0;
+  background-image: url('../assets/talk.jpg');
+  background-size: cover;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
   border-radius: 24px;
@@ -253,18 +267,23 @@ export default {
   width: 100%;
   height: 100%;
   font-weight: 700;
+  color: #ffffffe3;
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
 }
 
 .call {
   width: 60vw;
   height: calc(var(--vh, 1vh) * 14);
   position: relative;
-  background-color: #e0e0e0;
+  background-image: url('../assets/call.jpg');
+  background-size: cover;
+  background-position: 50% 30%;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
   border-radius: 24px;
   text-align: center;
-  line-height: calc(var(--vh, 1vh) * 14);
+  line-height: calc(var(--vh, 1vh) * 15);
   cursor: pointer;
   margin-left: 10vw;
   margin-right: 10vw;
@@ -273,5 +292,8 @@ export default {
   width: 100%;
   height: 100%;
   font-weight: 700;
+  color: #ffffffe3;
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
 }
 </style>

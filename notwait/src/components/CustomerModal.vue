@@ -1,66 +1,76 @@
 <template>
-  <div class="CustomerModal-wrap" v-if="$store.state.customer_modal == 1">
-    <div
-      class="CustomerModal-wrap-top-m"
-      v-if="$store.state.customer_menu == 1"
-    >
+  <div class="CustomerModal-wrap" id="animate">
+    <div class="top-decoration" id="top-deco"></div>
+    <transition name="menu">
       <div
-        class="CustomerModal-wrap-top-menulist"
-        v-for="(a, i) in $store.state.menulist"
-        :key="i"
+        class="CustomerModal-wrap-top-m"
+        v-if="$store.state.customer_menu == 1"
       >
-        <p>{{ $store.state.menulist[i].menuname }}</p>
-        <p>{{ $store.state.menulist[i].menusubtext }}</p>
-        <p>{{ $store.state.menulist[i].price }}</p>
         <div
-          class="CustomerModal-wrap-top-menulist-img"
-          :style="{ backgroundImage: `url('${$store.state.menulist[i].img}')` }"
-        ></div>
-        <button @click="$store.commit('review_modalOnOff', i)">
-          리뷰보고 쓰기
-        </button>
-        <button @click="push(i)">장바구니추가</button>
-      </div>
-      <p>-------line--------</p>
-      <div
-        class="CustomerModal-wrap-top-basket"
-        v-for="(a, i) in orderlist"
-        :key="i"
-      >
-        <p>{{ orderlist[i].menuname }}</p>
-        <div class="basket-picker">
-          <div class="basket-up" @click="up(i)">up</div>
-          <div class="basket-number">{{ orderlist[i].number }}</div>
-          <div class="basket-down" @click="down(i)">down</div>
+          class="CustomerModal-wrap-top-menulist"
+          v-for="(a, i) in $store.state.menulist"
+          :key="i"
+        >
+          <p>{{ $store.state.menulist[i].menuname }}</p>
+          <p>{{ $store.state.menulist[i].menusubtext }}</p>
+          <p>{{ $store.state.menulist[i].price }}</p>
+          <div
+            class="CustomerModal-wrap-top-menulist-img"
+            :style="{
+              backgroundImage: `url('${$store.state.menulist[i].img}')`,
+            }"
+          ></div>
+          <button @click="$store.commit('review_modalOnOff', i)">
+            리뷰보고 쓰기
+          </button>
+          <button @click="push(i)">장바구니추가</button>
         </div>
+        <p>-------line--------</p>
+        <div
+          class="CustomerModal-wrap-top-basket"
+          v-for="(a, i) in orderlist"
+          :key="i"
+        >
+          <p>{{ orderlist[i].menuname }}</p>
+          <div class="basket-picker">
+            <div class="basket-up" @click="up(i)">up</div>
+            <div class="basket-number">{{ orderlist[i].number }}</div>
+            <div class="basket-down" @click="down(i)">down</div>
+          </div>
+        </div>
+        <button @click="submit">주문</button>
+        <button @click="refresh">장바구니 초기화</button>
+        <button @click="$store.commit('customer_modalOnOff', 'close')">
+          닫기
+        </button>
       </div>
-      <button @click="submit">주문</button>
-      <button @click="refresh">장바구니 초기화</button>
-    </div>
-    <div
-      class="CustomerModal-wrap-top-t"
-      v-if="$store.state.customer_bill == 1"
-    >
+    </transition>
+    <transition name="menu">
       <div
-        class="CustomerModal-wrap-top-table"
-        v-for="(a, i) in $store.state.table.orderlist"
-        :key="i"
+        class="CustomerModal-wrap-top-t"
+        v-if="$store.state.customer_bill == 1"
+        id="bill"
       >
-        <p>{{ $store.state.table.orderlist[i].menuname }}</p>
-        <p>{{ $store.state.table.orderlist[i].number }}</p>
-        <p>
-          {{
-            Number($store.state.table.orderlist[i].price) *
-            Number($store.state.table.orderlist[i].number)
-          }}
-        </p>
+        <div
+          class="CustomerModal-wrap-top-table"
+          v-for="(a, i) in $store.state.table.orderlist"
+          :key="i"
+        >
+          <p>{{ $store.state.table.orderlist[i].menuname }}</p>
+          <p>{{ $store.state.table.orderlist[i].number }}</p>
+          <p>
+            {{
+              Number($store.state.table.orderlist[i].price) *
+              Number($store.state.table.orderlist[i].number)
+            }}
+          </p>
+        </div>
+        <button @click="$store.commit('customer_modalOnOff', 'close')">
+          닫기
+        </button>
       </div>
-    </div>
-    <div
-      class="CustomerModal-wrap-bottom"
-      @click="$store.commit('customer_modalOnOff', 'close')"
-    ></div>
-    <Review />
+    </transition>
+    <Review v-if="$store.state.customer_modal == 1" />
   </div>
 </template>
 
@@ -111,20 +121,47 @@ export default {
       this.orderlist = [];
     },
   },
+  computed: {
+    modal() {
+      return this.$store.state.customer_modal;
+    },
+  },
+  watch: {
+    modal(val) {
+      var doc = document.getElementById('animate');
+      var doc1 = document.getElementById('top-deco');
+      if (val == 1) {
+        doc.classList.add('start');
+      } else {
+        doc.classList.remove('start');
+        doc1.classList.add('end-deco');
+        setTimeout(() => {
+          doc1.classList.remove('end-deco');
+        }, 400);
+      }
+    },
+  },
 };
 </script>
 
 <style>
 .CustomerModal-wrap {
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 91);
+  height: calc(var(--vh, 1vh) * 4);
   position: absolute;
-  top: calc(var(--vh, 1vh) * 5);
+  top: calc(var(--vh, 1vh) * 96);
+}
+.top-decoration {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 4);
+  background-color: aquamarine;
+  position: relative;
 }
 .CustomerModal-wrap-top-m {
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 80);
+  height: calc(var(--vh, 1vh) * 96);
   background-color: cadetblue;
+  position: relative;
 }
 .CustomerModal-wrap-top-menulist-img {
   width: calc(var(--vh, 1vh) * 10);
@@ -142,20 +179,52 @@ export default {
 }
 .CustomerModal-wrap-top-t {
   width: 100vw;
-  height: calc(var(--vh, 1vh) * 80);
+  height: calc(var(--vh, 1vh) * 96);
   background-color: cadetblue;
+  position: relative;
 }
 .CustomerModal-wrap-top-table {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
 }
-.CustomerModal-wrap-bottom {
-  position: relative;
-  width: 18vw;
-  height: 18vw;
-  background-color: #c4abab;
-  border-radius: 50%;
-  left: 41vw;
+
+.menu-leave-active {
+  animation: down 0.4s 0s 1 ease;
+}
+.start {
+  animation: up 0.4s 0s 1 ease;
+  animation-fill-mode: forwards;
+}
+.end-deco {
+  animation: down-deco 0.4s 0s 1 ease;
+}
+@keyframes up {
+  0% {
+    height: calc(var(--vh, 1vh) * 0);
+    transform: translateY(0);
+  }
+  100% {
+    height: calc(var(--vh, 1vh) * 100);
+    transform: translateY(calc(var(--vh, 1vh) * -96));
+  }
+}
+@keyframes down {
+  0% {
+    height: calc(var(--vh, 1vh) * 100);
+    transform: translateY(calc(var(--vh, 1vh) * -96));
+  }
+  100% {
+    height: calc(var(--vh, 1vh) * 0);
+    transform: translateY(0);
+  }
+}
+@keyframes down-deco {
+  0% {
+    transform: translateY(calc(var(--vh, 1vh) * -96));
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 </style>
