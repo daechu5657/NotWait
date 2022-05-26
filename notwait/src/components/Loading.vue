@@ -57,6 +57,7 @@ export default {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 100);
   background-color: #f0f0f0;
+  z-index: 10;
 }
 .progressbar-total {
   position: absolute;

@@ -97,11 +97,17 @@ const store = createStore({
     review_modalOnOff(state, payload) {
       if (payload != undefined) {
         state.review_index = payload;
-      }
-      if (state.review_modal == 1) {
-        state.review_modal = 0;
+        if (state.review_modal == 1) {
+          state.review_modal = 0;
+        } else {
+          state.review_modal = 1;
+        }
       } else {
-        state.review_modal = 1;
+        if (state.review_modal == 1) {
+          state.review_modal = 0;
+        } else {
+          state.review_modal = 1;
+        }
       }
     },
     login_percentage(state, payload) {

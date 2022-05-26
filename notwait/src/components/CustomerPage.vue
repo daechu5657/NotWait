@@ -35,6 +35,7 @@
     <CustomerModal />
     <CustomerTalk />
     <EventModal />
+    <Cooking />
     <transition name="loading">
       <Loading />
     </transition>
@@ -48,6 +49,7 @@ import CustomerModal from './CustomerModal.vue';
 import CustomerTalk from './CustomerTalk.vue';
 import EventModal from './EventModal.vue';
 import Loading from './Loading.vue';
+import Cooking from './Cooking.vue';
 // import axios from 'axios';
 
 export default {
@@ -59,6 +61,7 @@ export default {
     CustomerTalk: CustomerTalk,
     EventModal: EventModal,
     Loading: Loading,
+    Cooking: Cooking,
   },
   methods: {},
   mounted() {

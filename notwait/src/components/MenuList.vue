@@ -31,7 +31,12 @@
           placeholder="Menuprice"
           v-model="send[index].price"
         />
-        <input type="file" spellcheck="false" class="Menuimg" @change="img" />
+        <input
+          type="file"
+          spellcheck="false"
+          class="Menuimg"
+          @change="img($event, index)"
+        />
         <span @click="del(index)">삭제</span>
       </div>
     </div>
@@ -77,7 +82,8 @@ export default {
         this.$store.commit('menulistUpdate', response);
       });
     },
-    img(e) {
+    img(e, index) {
+      console.log(e);
       let 파일 = e.target.files[0];
       function readFile(file, onLoadCallback) {
         var reader = new FileReader();
@@ -85,7 +91,7 @@ export default {
         reader.readAsDataURL(file);
       }
       readFile(파일, e => {
-        this.send[this.send.length - 1].img = e.target.result;
+        this.send[index].img = e.target.result;
       });
     },
   },
@@ -118,7 +124,7 @@ export default {
   border: 1px solid;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  overflow: scroll;
 }
 
 .img {

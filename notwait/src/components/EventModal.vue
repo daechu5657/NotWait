@@ -1,7 +1,9 @@
 <template>
-  <p class="event_modal" v-if="$store.state.event_modal == 1" @click="off">
-    {{ $store.state.event_text }}
-  </p>
+  <transition name="blur">
+    <p class="event_modal" v-if="$store.state.event_modal == 1" @click="off">
+      {{ $store.state.event_text }}
+    </p>
+  </transition>
 </template>
 
 <script>
@@ -18,10 +20,25 @@ export default {
 <style>
 .event_modal {
   position: absolute;
-  width: calc(var(--vh, 1vh) * 10);
-  height: calc(var(--vh, 1vh) * 10);
-  top: 0;
-  left: 0;
-  background-color: bisque;
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 100);
+  background-color: transparent;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 100);
+  font-size: 6vw;
+  font-weight: 900;
+}
+.blur-enter-active {
+  animation: blur 0.4s 0s 1 ease;
+}
+@keyframes blur {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>
