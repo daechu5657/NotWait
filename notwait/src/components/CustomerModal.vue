@@ -71,32 +71,44 @@
       </div>
     </transition>
     <transition name="menu">
-      <div
-        class="CustomerModal-wrap-top-t"
-        v-if="$store.state.customer_bill == 1"
-        id="bill"
-      >
-        <div
-          class="CustomerModal-wrap-top-table"
-          v-for="(a, i) in $store.state.table.orderlist"
-          :key="i"
-        >
-          <p class="orderlist-menuname">
-            {{ $store.state.table.orderlist[i].menuname }}
-          </p>
-          <p class="orderlist-number">
-            {{ $store.state.table.orderlist[i].number }}
-          </p>
-          <p class="orderlist-price">
-            {{
-              Number($store.state.table.orderlist[i].price) *
-              Number($store.state.table.orderlist[i].number)
-            }}Won
-          </p>
+      <div class="bill" v-if="$store.state.customer_bill == 1">
+        <div class="CustomerModal-wrap-top-logo">#Dalha_min</div>
+        <div class="CustomerModal-wrap-top-middle">
+          <div
+            class="CustomerModal-wrap-top-t"
+            v-if="$store.state.customer_bill == 1"
+            id="bill"
+          >
+            <div
+              class="CustomerModal-wrap-top-table"
+              v-for="(a, i) in $store.state.table.orderlist"
+              :key="i"
+            >
+              <p class="orderlist-menuname">
+                {{ $store.state.table.orderlist[i].menuname }}
+              </p>
+              <p class="orderlist-number">
+                {{ $store.state.table.orderlist[i].number }}
+              </p>
+              <p class="orderlist-price">
+                {{
+                  Number($store.state.table.orderlist[i].price) *
+                  Number($store.state.table.orderlist[i].number)
+                }}
+              </p>
+            </div>
+            <div class="middle-total">
+              <p>Total</p>
+              <p>{{ totalbill }}</p>
+            </div>
+          </div>
         </div>
-        <button @click="$store.commit('customer_modalOnOff', 'close')">
-          닫기
-        </button>
+        <div
+          class="CustomerModal-wrap-top-bottom"
+          @click="$store.commit('customer_modalOnOff', 'close')"
+        >
+          Close
+        </div>
       </div>
     </transition>
     <transition name="review">
@@ -114,6 +126,7 @@ export default {
       totalprice: 0,
       delN: 0,
       delS: 'Del Off',
+      totalbill: 0,
     };
   },
   components: {
@@ -169,6 +182,9 @@ export default {
     modal() {
       return this.$store.state.customer_modal;
     },
+    billtotal() {
+      return this.$store.state.table.orderlist;
+    },
   },
   watch: {
     modal(val) {
@@ -197,11 +213,25 @@ export default {
         }
       },
     },
+    billtotal: {
+      deep: true,
+      handler() {
+        var n = this.$store.state.table.orderlist.length;
+        var i;
+        this.totalbill = 0;
+        for (i = 0; i < n; i++) {
+          this.totalbill +=
+            parseInt(this.$store.state.table.orderlist[i].price) *
+            parseInt(this.$store.state.table.orderlist[i].number);
+        }
+      },
+    },
   },
 };
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
 .CustomerModal-wrap {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 4);
@@ -223,7 +253,6 @@ export default {
   font-weight: 900;
   line-height: calc(var(--vh, 1vh) * 4);
   top: 1px;
-  box-shadow: 0 4px 10px 1px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
 }
 .CustomerModal-wrap-top-m {
   width: 100vw;
@@ -363,7 +392,7 @@ export default {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  font-size: 4vw;
+  font-size: 3vw;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 8px -2px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
 }
@@ -396,18 +425,26 @@ export default {
   background-position: center;
 }
 .CustomerModal-wrap-top-t {
-  width: 100vw;
-  height: calc(var(--vh, 1vh) * 96);
+  width: inherit;
+  height: inherit;
   position: relative;
-  background-color: #f0f0f0;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
+  overflow: scroll;
+}
+
+.CustomerModal-wrap-top-t {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.CustomerModal-wrap-top-t::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
 }
 .CustomerModal-wrap-top-table {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+  margin: 5vw 0;
 }
 
 .menu-leave-active {
@@ -465,5 +502,60 @@ export default {
     transform: scale(1);
     opacity: 1;
   }
+}
+.CustomerModal-wrap-top-logo {
+  position: relative;
+  left: 10vw;
+  font-size: 10vw;
+  color: #21211f;
+  font-weight: 700;
+  text-align: center;
+  width: 80vw;
+  height: calc(var(--vh, 1vh) * 10);
+  line-height: calc(var(--vh, 1vh) * 10);
+}
+.CustomerModal-wrap-top-middle {
+  position: relative;
+  left: 10vw;
+  font-size: 3vw;
+  font-family: Abel, sans-serif;
+  width: 80vw;
+  height: calc(var(--vh, 1vh) * 80);
+  border-top: 1px dotted #21211f;
+}
+.bill {
+  background-color: #f0f0f0;
+}
+.CustomerModal-wrap-top-bottom {
+  position: absolute;
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 6);
+  text-align: center;
+  line-height: calc(var(--vh, 1vh) * 6);
+  font-size: 3vw;
+}
+.orderlist-menuname {
+  width: 60vw;
+  text-align: left;
+}
+.orderlist-number {
+  width: 5vw;
+  text-align: center;
+}
+.orderlist-price {
+  width: 15vw;
+  text-align: right;
+}
+.middle-total {
+  width: 80vw;
+  height: calc(var(--vh, 1vh) * 7);
+  line-height: calc(var(--vh, 1vh) * 7);
+  position: relative;
+  border-top: 1px dotted #21211f;
+  border-bottom: 1px dotted #21211f;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 </style>
