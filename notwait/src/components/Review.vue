@@ -1,5 +1,8 @@
 <template>
-  <div class="review-wrap" v-if="$store.state.review_modal == 1">
+  <div
+    class="review-wrap"
+    v-if="$store.state.review_modal == 1 || $store.state.review_modal == 1"
+  >
     <div class="review-top">
       <p class="review-menuname">
         {{ $store.state.menulist[$store.state.review_index].menuname }}
@@ -44,6 +47,8 @@
         class="review-input"
         placeholder="Contents"
         v-model="send.text"
+        spellcheck="false"
+        @keyup.enter="data"
       />
       <!-- <input type="text" class="review-value" v-model="send.value" /> -->
       <div class="star">
@@ -58,9 +63,7 @@
           max="10"
           v-model="send.value"
         />
-        <div class="star-write" @click="$store.dispatch('review_update', send)">
-          Write
-        </div>
+        <div class="star-write" @click="data">Write</div>
         <div class="star-close" @click="$store.commit('review_modalOnOff')">
           Close
         </div>
@@ -81,6 +84,12 @@ export default {
       },
       totalvalue: 0,
     };
+  },
+  methods: {
+    data() {
+      this.$store.dispatch('review_update', this.send);
+      this.send.text = '';
+    },
   },
   watch: {
     send: {

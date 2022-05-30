@@ -25,7 +25,10 @@
         <div class="bill-list">
           <p @click="$store.commit('customer_modalOnOff', 'bill')">OrderList</p>
         </div>
-        <div class="talk" @click="$store.commit('talk_modalOnOff', 1)">
+        <div
+          class="talk"
+          @click="$store.commit('talk_modalOnOff', $route.params.id)"
+        >
           <p>Talk</p>
         </div>
         <div class="call"><p>Call</p></div>

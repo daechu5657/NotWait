@@ -131,6 +131,12 @@ const store = createStore({
     talk_sync(state, payload) {
       state.table.talk.push(payload[0]);
     },
+    owner_talk_sync(state, payload) {
+      var index = payload.index;
+      var contents = Object.values(payload.data);
+      console.log(contents);
+      state.table[index].talk.push(contents[0]);
+    },
   },
   actions: {
     table_update(context, payload) {
@@ -170,9 +176,19 @@ const store = createStore({
     },
     talk_update(context, payload) {
       var send;
-      send = { text: payload, index: this.state.talk_index };
+      send = { text: payload, index: this.state.talk_index, talkindex: 0 };
       axios.post('/Talkupdate', send).then(response => {
         context.commit('table_sync', response.data[0].table);
+      });
+    },
+    customer_talk_update(context, payload) {
+      var send;
+      send = { text: payload, index: this.state.customer_id - 1, talkindex: 1 };
+      axios.post('/Talkupdate', send).then(response => {
+        context.commit(
+          'table_sync',
+          response.data[0].table[this.state.customer_id - 1]
+        );
       });
     },
     orderlist_update(context, payload) {
@@ -185,9 +201,7 @@ const store = createStore({
       });
     },
     review_update(context, payload) {
-      console.log(payload);
       axios.post('/Review', payload).then(response => {
-        console.log(response);
         context.commit('menulistSync', response.data[0].menu);
       });
     },
@@ -197,12 +211,29 @@ const store = createStore({
       var eventSource = new EventSource(`/Sync/${payload}`);
       eventSource.addEventListener('test', function (e) {
         var 문서 = JSON.parse(e.data);
-        if (Object.keys(문서) == 'menu') {
-          context.commit('menulistSync', 문서.menu);
-        } else if (Object.keys(문서) === 'table') {
+        console.log(문서);
+        var n = Object.keys(문서).toString();
+        let alpha = n.substr(0, 4);
+        if (alpha == 'menu') {
+          context.commit('menulistSync', 문서);
+        } else if (alpha === 'tabl') {
           context.commit('table_sync', 문서.table);
         } else {
           context.commit('talk_sync', Object.values(문서));
+        }
+      });
+    },
+    customer_owner_update(context) {
+      console.log('실시간업데이트오너');
+      var eventSource = new EventSource('/Owner/Sync');
+      eventSource.addEventListener('test', function (e) {
+        var 문서 = JSON.parse(e.data);
+        var n = Object.keys(문서.data).toString();
+        let alpha = n.substr(8, 3);
+        if (alpha == 'tal') {
+          context.commit('owner_talk_sync', 문서);
+        } else if (alpha == 'ord') {
+          console.log(문서);
         }
       });
     },

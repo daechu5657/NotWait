@@ -97,7 +97,12 @@
                 }}
               </p>
             </div>
-            <div class="middle-total">
+            <div
+              class="middle-total"
+              v-bind:class="{
+                topoff: $store.state.table.orderlist.length == 0,
+              }"
+            >
               <p>Total</p>
               <p>{{ totalbill }}</p>
             </div>
@@ -438,7 +443,7 @@ export default {
   scrollbar-width: none; /* Firefox */
 }
 .CustomerModal-wrap-top-t::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera*/
+  display: none;
 }
 .CustomerModal-wrap-top-table {
   display: flex;
@@ -557,5 +562,8 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.topoff {
+  border-top: 0;
 }
 </style>

@@ -123,7 +123,10 @@ MongoClient.connect(
     });
     app.post('/Talkupdate', function (요청, 응답) {
       var obj = {};
-      obj[`table.${요청.body.index}.talk`] = 요청.body.text;
+      obj[`table.${요청.body.index}.talk`] = {
+        text: 요청.body.text,
+        index: 요청.body.talkindex,
+      };
       if (요청.body.text != '') {
         db.collection('table').updateOne(
           {
@@ -157,13 +160,6 @@ MongoClient.connect(
         res.write('event: test\n');
         res.write(`data: ${JSON.stringify(문서)}\n\n`);
       });
-      // var 문서1;
-      // const table = db.collection('table').watch();
-      // table.on('change', result => {
-      //   문서1 = result.updateDescription.updatedFields;
-      //   res.write('event: test\n');
-      //   res.write(`data: ${JSON.stringify(문서1)}\n\n`);
-      // });
 
       var 문서2;
       const talk = db.collection('table').watch();
@@ -176,18 +172,25 @@ MongoClient.connect(
           res.write(`data: ${JSON.stringify(문서2)}\n\n`);
         }
       });
-
-      // const pipeline = [
-      //   { $match: { 'fullDocument.participants': socket.uid } },
-      // ];
-
-      // var 문서2;
-      // const talk = db.collection('table').watch(pipeline);
-      // talk.on('change', result => {
-      //   문서2 = result
-      //   res.write('event: test\n');
-      //   res.write(`data: ${JSON.stringify(문서2)}\n\n`);
-      // });
+    });
+    app.get('/Owner/Sync', function (요청, res) {
+      res.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      });
+      var 문서2;
+      const talk = db.collection('table').watch();
+      talk.on('change', result => {
+        문서2 = result.updateDescription.updatedFields;
+        var n = Object.keys(문서2).toString();
+        let num = Number(n.substr(6, 1));
+        res.write('event: test\n');
+        res.write('data: {\n');
+        res.write(`data: "data":  ${JSON.stringify(문서2)},\n`);
+        res.write(`data: "index": ${num}\n`);
+        res.write('data: }\n\n');
+      });
     });
     //owner=>customer 방향 싱크 반대방향싱크도 만들어야함(owner 수신이 필요함)
     app.post('/Orderlist', function (요청, 응답) {

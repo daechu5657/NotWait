@@ -109,6 +109,9 @@ export default {
       }
     },
   },
+  created() {
+    this.$store.dispatch('customer_owner_update');
+  },
 };
 </script>
 
