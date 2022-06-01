@@ -79,6 +79,7 @@
             v-if="$store.state.customer_bill == 1"
             id="bill"
           >
+            <div class="middle-top"></div>
             <div
               class="CustomerModal-wrap-top-table"
               v-for="(a, i) in $store.state.table.orderlist"
@@ -269,6 +270,10 @@ export default {
   border-right: 1px solid;
   border-bottom: 1px solid; */
 }
+
+.CustomerModal-wrap-top-m::-webkit-scrollbar {
+  display: none;
+}
 .CustomerModal-wrap-top-menulist {
   position: relative;
   width: 90vw;
@@ -439,8 +444,8 @@ export default {
 }
 
 .CustomerModal-wrap-top-t {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .CustomerModal-wrap-top-t::-webkit-scrollbar {
   display: none;
@@ -526,7 +531,7 @@ export default {
   font-family: Abel, sans-serif;
   width: 80vw;
   height: calc(var(--vh, 1vh) * 80);
-  border-top: 1px dotted #21211f;
+  /* border-top: 1px dotted #21211f; */
 }
 .bill {
   background-color: #f0f0f0;
@@ -562,6 +567,10 @@ export default {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.middle-top {
+  position: relative;
+  border-top: 1px dotted #21211f;
 }
 .topoff {
   border-top: 0;

@@ -36,7 +36,9 @@
     </div>
 
     <CustomerModal />
-    <CustomerTalk />
+    <transition name="talk">
+      <CustomerTalk v-if="$store.state.talk_modal == 1" />
+    </transition>
     <EventModal />
     <Cooking />
     <transition name="loading">
@@ -301,5 +303,19 @@ export default {
   color: #ffffffe3;
   backdrop-filter: blur(10px);
   border-radius: 24px;
+}
+.talk-enter-active {
+  animation: side 0.3s 0s 1 ease;
+}
+.talk-leave-active {
+  animation: side 0.3s 0s 1 ease reverse;
+}
+@keyframes side {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 </style>

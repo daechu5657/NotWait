@@ -1,7 +1,7 @@
 <template>
   <div
     class="review-wrap"
-    v-if="$store.state.review_modal == 1 || $store.state.review_modal == 1"
+    v-if="$store.state.review_modal == 1 && $store.state.customer_modal == 1"
   >
     <div class="review-top">
       <p class="review-menuname">
@@ -9,7 +9,7 @@
       </p>
       <div class="review-top-right">
         <p class="totalstar">★</p>
-        <p class="totalvalue">{{ totalvalue }}</p>
+        <p class="totalvalue">{{ (totalvalue / 2).toFixed(1) }}</p>
       </div>
     </div>
     <div class="review-repeat-wrap">
@@ -100,6 +100,31 @@ export default {
         }vw`;
       },
     },
+    total_value: {
+      deep: true,
+      handler() {
+        this.totalvalue = 0;
+        var length =
+          this.$store.state.menulist[this.$store.state.review_index].review
+            .length;
+        var i;
+        for (i = 0; i < length; i++) {
+          this.totalvalue += parseInt(
+            this.$store.state.menulist[this.$store.state.review_index].review[i]
+              .value
+          );
+        }
+        this.totalvalue = this.totalvalue / length;
+        if (length == 0) {
+          this.totalvalue = 0;
+        }
+      },
+    },
+  },
+  computed: {
+    total_value() {
+      return this.$store.state.menulist[this.$store.state.review_index].review;
+    },
   },
   mounted() {
     var length =
@@ -111,7 +136,7 @@ export default {
           .value
       );
     }
-    this.totalvalue = this.totalvalue / length / 2;
+    this.totalvalue = this.totalvalue / length;
     if (length == 0) {
       this.totalvalue = 0;
     }
@@ -136,6 +161,10 @@ export default {
   width: 80vw;
   height: calc(var(--vh, 1vh) * 23);
   overflow: scroll;
+}
+
+.review-repeat-wrap::-webkit-scrollbar {
+  display: none;
 }
 .review-nothing {
   text-align: center;

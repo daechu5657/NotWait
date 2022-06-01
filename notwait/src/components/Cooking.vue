@@ -1,13 +1,13 @@
 <template>
   <div class="cooking-wrap">
-    <div class="cooking-0" v-if="$store.state.table.cook == 1">
-      <p>Not Ordered</p>
+    <div class="cooking-0" v-if="$store.state.table.cook == 0">
+      <p>Taking order</p>
     </div>
-    <div class="cooking-1" v-if="$store.state.table.cook == 0">
+    <div class="cooking-1" v-if="$store.state.table.cook == 1">
       <div class="cook-img"></div>
-      <p>{{ $store.state.table.time }} Minutes Left..</p>
+      <p>Cooking</p>
     </div>
-    <div class="cooking-2" v-if="$store.state.table.cook == 1">
+    <div class="cooking-2" v-if="$store.state.table.cook == 2">
       <p>
         Cooking Done <br />
         We Will Bring It Soon

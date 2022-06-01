@@ -137,12 +137,13 @@ MongoClient.connect(
           },
           { upsert: true },
           function (에러, 결과) {
-            db.collection('table')
-              .find({ _id: '1234' })
-              .toArray()
-              .then(a => {
-                응답.send(a);
-              });
+            응답.sendStatus(200);
+            // db.collection('table')
+            //   .find({ _id: '1234' })
+            //   .toArray()
+            //   .then(a => {
+            //     응답.send(a);
+            //   });
           }
         );
       }
@@ -208,12 +209,13 @@ MongoClient.connect(
         },
         { upsert: true },
         function (에러, 결과) {
-          db.collection('table')
-            .find({ _id: '1234' })
-            .toArray()
-            .then(a => {
-              응답.send(a);
-            });
+          응답.sendStatus(200);
+          // db.collection('table')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
         }
       );
     });
@@ -233,12 +235,13 @@ MongoClient.connect(
         },
         { upsert: true },
         function (에러, 결과) {
-          db.collection('menu')
-            .find({ _id: '1234' })
-            .toArray()
-            .then(a => {
-              응답.send(a);
-            });
+          응답.sendStatus(200);
+          // db.collection('menu')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
         }
       );
     });

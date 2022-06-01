@@ -68,6 +68,7 @@ const store = createStore({
         state.customer_menu = 0;
         state.customer_bill = 0;
         state.customer_modal = 0;
+        state.review_modal = 0;
       }
     },
     talk_modalOnOff(state, payload) {
@@ -81,7 +82,7 @@ const store = createStore({
       }
     },
     table_push(state, payload) {
-      state.table.push({ orderlist: [], talk: [], index: payload });
+      state.table.push({ orderlist: [], talk: [], index: payload, cook: 0 });
     },
     table_del(state) {
       state.table.pop();
@@ -123,7 +124,7 @@ const store = createStore({
       state.customer_id = payload;
     },
     menulistSync(state, payload) {
-      state.menulist = payload;
+      state.menulist = payload.menu;
     },
     table_sync(state, payload) {
       state.table = payload;
@@ -136,6 +137,21 @@ const store = createStore({
       var contents = Object.values(payload.data);
       console.log(contents);
       state.table[index].talk.push(contents[0]);
+    },
+    review_sync(state, payload) {
+      var n = Object.keys(payload).toString();
+      let index = n.substr(5, 1);
+      state.menulist[index].review.push(Object.values(payload)[0]);
+    },
+    orderlist_sync(state, payload) {
+      var length = Object.values(payload).length;
+      var num;
+      for (num = 0; num < length; num++) {
+        state.table.orderlist.push(Object.values(payload)[num]);
+      }
+    },
+    cook_sync(state, payload) {
+      state.table.cook = Object.values(payload);
     },
   },
   actions: {
@@ -174,36 +190,37 @@ const store = createStore({
           }
         });
     },
-    talk_update(context, payload) {
+    talk_update(commit, payload) {
       var send;
       send = { text: payload, index: this.state.talk_index, talkindex: 0 };
-      axios.post('/Talkupdate', send).then(response => {
-        context.commit('table_sync', response.data[0].table);
-      });
+      axios.post('/Talkupdate', send);
+      // axios.post('/Talkupdate', send).then(response => {
+      //   context.commit('table_sync', response.data[0].table);
+      // });
     },
-    customer_talk_update(context, payload) {
+    customer_talk_update(commit, payload) {
       var send;
       send = { text: payload, index: this.state.customer_id - 1, talkindex: 1 };
-      axios.post('/Talkupdate', send).then(response => {
-        context.commit(
-          'table_sync',
-          response.data[0].table[this.state.customer_id - 1]
-        );
-      });
+      axios.post('/Talkupdate', send);
+      // axios.post('/Talkupdate', send).then(response => {
+      //   context.commit(
+      //     'table_sync',
+      //     response.data[0].table[this.state.customer_id - 1]
+      //   );
+      // });
     },
-    orderlist_update(context, payload) {
+    orderlist_update(commit, payload) {
       var send = { index: this.state.customer_id, payload: payload };
-      axios.post('/Orderlist', send).then(response => {
-        context.commit(
-          'table_sync',
-          response.data[0].table[this.state.customer_id - 1]
-        );
-      });
+      axios.post('/Orderlist', send);
+      // axios.post('/Orderlist', send).then(response => {
+      //   context.commit(
+      //     'table_sync',
+      //     response.data[0].table[this.state.customer_id - 1]
+      //   );
+      // });
     },
-    review_update(context, payload) {
-      axios.post('/Review', payload).then(response => {
-        context.commit('menulistSync', response.data[0].menu);
-      });
+    review_update(commit, payload) {
+      axios.post('/Review', payload);
     },
     owner_customer_update(context, payload) {
       console.log('실시간업데이트');
@@ -211,15 +228,29 @@ const store = createStore({
       var eventSource = new EventSource(`/Sync/${payload}`);
       eventSource.addEventListener('test', function (e) {
         var 문서 = JSON.parse(e.data);
-        console.log(문서);
         var n = Object.keys(문서).toString();
         let alpha = n.substr(0, 4);
         if (alpha == 'menu') {
-          context.commit('menulistSync', 문서);
-        } else if (alpha === 'tabl') {
-          context.commit('table_sync', 문서.table);
-        } else {
-          context.commit('talk_sync', Object.values(문서));
+          let vet = n.substr(7, 6);
+          if (vet == 'review') {
+            console.log('리뷰');
+            context.commit('review_sync', 문서);
+          } else {
+            console.log('메뉴리스트');
+            context.commit('menulistSync', 문서);
+          }
+        } else if (alpha == 'tabl') {
+          let vet = n.substr(8, 4);
+          if (vet == 'talk') {
+            console.log('톡');
+            context.commit('talk_sync', Object.values(문서));
+          } else if (vet == 'orde') {
+            console.log('주문');
+            context.commit('orderlist_sync', 문서);
+          } else if (vet == 'cook') {
+            console.log('요리상태');
+            context.commit('cook_sync', 문서);
+          }
         }
       });
     },

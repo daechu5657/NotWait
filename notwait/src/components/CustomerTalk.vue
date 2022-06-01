@@ -1,35 +1,34 @@
 <template>
-  <transition name="talk">
-    <div class="CustomerTalk-wrap" v-if="$store.state.talk_modal == 1">
-      <div class="CustomerTalk-top" id="scroll">
-        <div
-          :class="`CustomerTalk-top-repeat${a.index}`"
-          v-for="(a, i) in $store.state.table.talk"
-          :key="i"
-        >
-          <span :class="`repeat${a.index}`">{{ a.text }}</span>
-        </div>
-      </div>
-      <div class="CustomerTalk-bottom">
-        <div
-          class="CustomerTalk-bottom-left"
-          @click="$store.commit('talk_modalOnOff', 0)"
-        >
-          &lt;
-        </div>
-        <div class="CustomerTalk-bottom-right">
-          <input
-            class="CustomerTalk-bottom-input"
-            type="text"
-            v-model="send"
-            spellcheck="false"
-            @keyup.enter="data"
-          />
-          <div class="CustomerTalk-bottom-send" @click="data">&gt;</div>
-        </div>
+  <div class="CustomerTalk-wrap">
+    <div class="CustomerTalk-top" id="scroll">
+      <div
+        :class="`CustomerTalk-top-repeat${a.index}`"
+        v-for="(a, i) in $store.state.table.talk"
+        :key="i"
+      >
+        <span :class="`repeat${a.index}`">{{ a.text }}</span>
       </div>
     </div>
-  </transition>
+    <div class="CustomerTalk-bottom">
+      <div
+        class="CustomerTalk-bottom-left"
+        @click="$store.commit('talk_modalOnOff', 0)"
+      >
+        <!-- &lt; -->
+        &rarr;
+      </div>
+      <div class="CustomerTalk-bottom-right">
+        <input
+          class="CustomerTalk-bottom-input"
+          type="text"
+          v-model="send"
+          spellcheck="false"
+          @keyup.enter="data"
+        />
+        <div class="CustomerTalk-bottom-send" @click="data">&gt;</div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -51,11 +50,6 @@ export default {
     },
   },
   watch: {
-    // scroll() {
-    //   var a = document.getElementById('scroll');
-    //   a.scrollTop = a.scrollHeight;
-    //   console.log(1);
-    // },
     scroll: {
       deep: true,
       handler() {
@@ -65,6 +59,12 @@ export default {
         }, 100);
       },
     },
+  },
+  mounted() {
+    this.$nextTick(function () {
+      var a = document.getElementById('scroll');
+      a.scrollTop = a.scrollHeight;
+    });
   },
 };
 </script>
@@ -182,20 +182,5 @@ export default {
   text-decoration-color: #6c804b69;
   text-decoration-thickness: 1.5vw;
   text-decoration-line: line-through; */
-}
-
-.talk-enter-active {
-  animation: side 0.3s 0s 1 ease;
-}
-.talk-leave-active {
-  animation: side 0.3s 0s 1 ease reverse;
-}
-@keyframes side {
-  0% {
-    transform: translateY(calc(var(--vh, 1vh) * 100));
-  }
-  100% {
-    transform: translateY(0);
-  }
 }
 </style>
