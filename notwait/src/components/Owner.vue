@@ -53,8 +53,11 @@
       </div>
     </div>
     <MenuList />
-    <Code />
+    <transition name="code">
+      <Code v-if="$store.state.login_modal == 0" />
+    </transition>
     <Talk />
+    <Ownereventmodal />
   </div>
 </template>
 
@@ -62,6 +65,7 @@
 import MenuList from './MenuList.vue';
 import Code from './Code.vue';
 import Talk from './Talk.vue';
+import Ownereventmodal from './Ownereventmodal.vue';
 export default {
   data() {
     return {
@@ -72,6 +76,7 @@ export default {
     MenuList: MenuList,
     Code: Code,
     Talk: Talk,
+    Ownereventmodal: Ownereventmodal,
   },
   props: {},
   methods: {
@@ -117,8 +122,8 @@ export default {
 
 <style>
 .Owner-wrap {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: #6d6575;
 }
 .Owner-top {
@@ -206,5 +211,17 @@ export default {
   border: 1px solid;
   top: 3vh;
   left: 1vw;
+}
+.code-leave-active {
+  animation: codeout 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+@keyframes codeout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translatex(-100vw);
+  }
 }
 </style>

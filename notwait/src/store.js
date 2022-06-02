@@ -16,10 +16,13 @@ const store = createStore({
       login_modal: 0,
       talk_modal: 0,
       event_modal: 0,
+      owner_event_modal: 0,
       event_text: '',
+      owner_event_text: '',
       review_modal: 0,
       review_index: 0,
       loading_modal: 1,
+      owner_loading_modal: 0,
       //index
       talk_index: 0,
       customer_id: 0,
@@ -32,18 +35,9 @@ const store = createStore({
       state.menulist = payload.data[0].menu;
     },
     login(state, payload) {
-      if (payload.data == '틀려유') {
-        alert('틀려유');
-      } else if (payload.data == '돈내야지') {
-        alert('돈내야지');
-      } else {
-        state.code = payload.data[0]._id;
-        state.menulist = payload.data[0].menu;
-        state.table = payload.data[1].table;
-
-        //modal
-        state.login_modal = 1;
-      }
+      state.code = payload.data[0]._id;
+      state.menulist = payload.data[0].menu;
+      state.table = payload.data[1].table;
     },
     customerlogin(state, payload) {
       state.menulist = payload.data[0];
@@ -95,6 +89,14 @@ const store = createStore({
         state.event_modal = 1;
       }
     },
+    owner_event_modalOnOff(state, payload) {
+      if (state.owner_event_modal == 1) {
+        state.owner_event_modal = 0;
+      } else {
+        state.owner_event_text = payload;
+        state.owner_event_modal = 1;
+      }
+    },
     review_modalOnOff(state, payload) {
       if (payload != undefined) {
         state.review_index = payload;
@@ -118,6 +120,10 @@ const store = createStore({
       if (state.percentage == 100) {
         state.loading_modal = 0;
       }
+    },
+    owner_login_percentage(state, payload) {
+      state.percentage = payload;
+      state.owner_loading_modal = 1;
     },
     //sync
     customer_idsync(state, payload) {
@@ -167,6 +173,32 @@ const store = createStore({
           context.commit('table_sync', response.data[0].table);
         });
       }
+    },
+    owner_login(context, payload) {
+      axios
+        .post(
+          '/Login',
+          { code: payload },
+          {
+            onDownloadProgress: ProgressEvent => {
+              let percentage =
+                (ProgressEvent.loaded * 100) / ProgressEvent.total;
+              let percentcompleted = Math.round(percentage);
+              context.commit('owner_login_percentage', percentcompleted);
+            },
+          }
+        )
+        .then(response => {
+          if (response.data.length < 2) {
+            context.commit('owner_event_modalOnOff', '재접속바랍니다');
+          } else if (response.data == '틀려유') {
+            context.commit('owner_event_modalOnOff', '틀려유');
+          } else if (response.data == '돈내야지') {
+            context.commit('owner_event_modalOnOff', '돈내야지');
+          } else {
+            context.commit('login', response);
+          }
+        });
     },
     customer_login(context, payload) {
       axios

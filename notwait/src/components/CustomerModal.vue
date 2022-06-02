@@ -2,7 +2,7 @@
   <div class="CustomerModal-wrap" id="animate">
     <div class="top-decoration" id="top-deco">|&nbsp;|</div>
     <transition name="menu">
-      <div class="menulist" v-if="$store.state.customer_menu == 1">
+      <div class="contents" v-if="$store.state.customer_menu == 1">
         <div
           class="CustomerModal-wrap-top-m"
           v-if="$store.state.customer_menu == 1"
@@ -260,6 +260,12 @@ export default {
   line-height: calc(var(--vh, 1vh) * 4);
   top: 1px;
 }
+.contents {
+  width: 100vw;
+  height: calc(var(--vh, 1vh) * 96);
+  position: relative;
+  background-color: #f0f0f0;
+}
 .CustomerModal-wrap-top-m {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 65);
@@ -270,7 +276,6 @@ export default {
   border-right: 1px solid;
   border-bottom: 1px solid; */
 }
-
 .CustomerModal-wrap-top-m::-webkit-scrollbar {
   display: none;
 }
@@ -326,11 +331,11 @@ export default {
   width: 100vw;
   height: calc(var(--vh, 1vh) * 31);
   background-color: #e6e6e6;
-  overflow: scroll;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 30px 1px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
+  overflow: hidden;
 }
 .footer-items {
   width: 100vw;
