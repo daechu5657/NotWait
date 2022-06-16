@@ -78,6 +78,7 @@ export default {
   display: flex;
   flex-direction: column;
   z-index: 1;
+  font-family: Abel, sans-serif;
 }
 .CustomerTalk-top {
   position: relative;
@@ -85,14 +86,12 @@ export default {
   top: calc(var(--vh, 1vh) * 2);
   width: 90vw;
   height: calc(var(--vh, 1vh) * 83);
-  /* display: flex;
-  flex-direction: column; */
   overflow: scroll;
   overflow-x: hidden;
-  border-radius: 24px;
   padding: 5vw 0;
   font-size: 4vw;
-  box-shadow: 0 2px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
+  border-top: 1px dotted #21211f;
+  border-bottom: 1px dotted #21211f;
 }
 .CustomerTalk-top::-webkit-scrollbar {
   display: none;
@@ -113,20 +112,19 @@ export default {
   position: relative;
   width: 70vw;
   height: calc(var(--vh, 1vh) * 6);
-  box-shadow: 0 2px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
-  border-radius: 24px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  border: 1px dotted #21211f;
 }
 .CustomerTalk-bottom-input {
   width: 60vw;
   height: calc(var(--vh, 1vh) * 6);
-  border-radius: 24px;
-  background-color: #83838369;
+  background-color: transparent;
   outline: none;
   border: none;
   text-align: center;
+  border-right: 1px dotted #21211f;
 }
 .CustomerTalk-bottom-send {
   width: 20vw;
@@ -139,11 +137,10 @@ export default {
   position: relative;
   width: 15vw;
   height: calc(var(--vh, 1vh) * 6);
-  box-shadow: 0 2px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
-  border-radius: 24px;
   font-size: 6vw;
   line-height: calc(var(--vh, 1vh) * 6);
   text-align: center;
+  border: 1px dotted #21211f;
 }
 .CustomerTalk-top-repeat0 {
   position: relative;
@@ -163,24 +160,16 @@ export default {
 }
 .repeat1 {
   position: relative;
-  border-radius: 24px;
   padding: 0 2vw;
-  margin-right: 2vw;
   text-align: center;
   word-break: break-all;
-  box-shadow: 0 2px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
+  border-bottom: 1px dotted #21211f;
 }
 .repeat0 {
   position: relative;
-  border-radius: 24px;
   padding: 0 2vw;
-  margin-left: 2vw;
   text-align: center;
   word-break: break-all;
-  box-shadow: 0 2px 8px -2px rgb(9 30 66 / 25%), 0 0 0 1px rgb(9 30 66 / 8%);
-  /* text-decoration: underline;
-  text-decoration-color: #6c804b69;
-  text-decoration-thickness: 1.5vw;
-  text-decoration-line: line-through; */
+  border-bottom: 1px dotted #21211f;
 }
 </style>

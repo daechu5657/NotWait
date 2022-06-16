@@ -15,6 +15,7 @@ export default {
   methods: {
     off() {
       this.$store.commit('owner_event_modalOnOff');
+      location.reload();
     },
   },
 };
@@ -33,6 +34,8 @@ export default {
   line-height: 100vh;
   font-size: 6vw;
   font-weight: 900;
+  color: #f0f0f0;
+  background-color: #0000006b;
 }
 .owner_event_modal-enter-active {
   animation: blur 0.4s 0s 1 ease;

@@ -24,7 +24,7 @@
                 {{ $store.state.menulist[i].menusubtext }}
               </p>
               <p class="menuprice">
-                {{ $store.state.menulist[i].price }} &nbsp;Won
+                {{ $store.state.menulist[i].price }} &nbsp;
               </p>
             </div>
             <div
@@ -50,7 +50,7 @@
               </div>
               <p class="basket-menuname">{{ orderlist[i].menuname }}</p>
               <p class="basket-price">
-                {{ orderlist[i].price * orderlist[i].number }}&nbsp;Won
+                {{ orderlist[i].price * orderlist[i].number }}&nbsp;
               </p>
               <div class="basket-picker">
                 <div class="basket-up" @click="up(i)">△</div>
@@ -61,7 +61,7 @@
           </div>
           <div class="footer-bottom">
             <div class="delstring" @click="del">{{ delS }}</div>
-            <div class="footer-total-price">{{ totalprice }}&nbsp; Won</div>
+            <div class="footer-total-price">{{ totalprice }}&nbsp;</div>
             <div @click="submit">Order</div>
             <div @click="$store.commit('customer_modalOnOff', 'close')">
               Close
@@ -81,23 +81,27 @@
           >
             <div class="middle-top"></div>
             <div
-              class="CustomerModal-wrap-top-table"
-              v-for="(a, i) in $store.state.table.orderlist"
-              :key="i"
+              class="CustomerModal-wrap-top-table-order"
+              v-for="(a, index) in $store.state.table.orderlist"
+              :key="index"
             >
-              <p class="orderlist-menuname">
-                {{ $store.state.table.orderlist[i].menuname }}
-              </p>
-              <p class="orderlist-number">
-                {{ $store.state.table.orderlist[i].number }}
-              </p>
-              <p class="orderlist-price">
-                {{
-                  Number($store.state.table.orderlist[i].price) *
-                  Number($store.state.table.orderlist[i].number)
-                }}
-              </p>
+              <div
+                class="CustomerModal-wrap-top-table"
+                v-for="(a, i) in $store.state.table.orderlist[index]"
+                :key="i"
+              >
+                <p class="orderlist-menuname">
+                  {{ a.menuname }}
+                </p>
+                <p class="orderlist-number">
+                  {{ a.number }}
+                </p>
+                <p class="orderlist-price">
+                  {{ Number(a.price) * Number(a.number) }}
+                </p>
+              </div>
             </div>
+
             <div
               class="middle-total"
               v-bind:class="{
@@ -176,9 +180,11 @@ export default {
       }
     },
     submit() {
-      this.$store.dispatch('orderlist_update', this.orderlist);
-      this.$store.commit('event_modalOnOff', 'Order completed');
-      this.orderlist = [];
+      if (this.orderlist.length != 0) {
+        this.$store.dispatch('orderlist_update', this.orderlist);
+        this.$store.commit('event_modalOnOff', 'Order completed');
+        this.orderlist = [];
+      }
     },
     delbasket(i) {
       this.orderlist.splice(i, 1);
@@ -209,26 +215,30 @@ export default {
     orderlist: {
       deep: true,
       handler() {
-        var n = this.orderlist.length;
-        var i;
+        var n1 = this.orderlist.length;
+        var f;
         this.totalprice = 0;
-        for (i = 0; i < n; i++) {
+        for (f = 0; f < n1; f++) {
           this.totalprice +=
-            parseInt(this.orderlist[i].price) *
-            parseInt(this.orderlist[i].number);
+            parseInt(this.orderlist[f].price) *
+            parseInt(this.orderlist[f].number);
         }
       },
     },
     billtotal: {
       deep: true,
       handler() {
-        var n = this.$store.state.table.orderlist.length;
-        var i;
+        var n1 = this.$store.state.table.orderlist.length;
+        var f;
+        var s;
         this.totalbill = 0;
-        for (i = 0; i < n; i++) {
-          this.totalbill +=
-            parseInt(this.$store.state.table.orderlist[i].price) *
-            parseInt(this.$store.state.table.orderlist[i].number);
+        for (f = 0; f < n1; f++) {
+          var n2 = this.$store.state.table.orderlist[f].length;
+          var contents = this.$store.state.table.orderlist[f];
+          for (s = 0; s < n2; s++) {
+            this.totalbill +=
+              parseInt(contents[s].price) * parseInt(contents[s].number);
+          }
         }
       },
     },
@@ -244,6 +254,7 @@ export default {
   position: absolute;
   top: calc(var(--vh, 1vh) * 96);
   z-index: 1;
+  font-family: Abel, sans-serif;
 }
 .top-decoration {
   width: 100vw;
@@ -336,6 +347,7 @@ export default {
   box-shadow: rgb(9 30 66 / 25%) 0px 4px 30px 1px,
     rgb(9 30 66 / 8%) 0px 0px 0px 1px;
   overflow: hidden;
+  font-family: Abel, sans-serif;
 }
 .footer-items {
   width: 100vw;
@@ -344,6 +356,9 @@ export default {
   display: flex;
   flex-direction: column;
   overflow: scroll;
+}
+.footer-items::-webkit-scrollbar {
+  display: none;
 }
 .not-items {
   text-align: center;
@@ -566,7 +581,6 @@ export default {
   height: calc(var(--vh, 1vh) * 7);
   line-height: calc(var(--vh, 1vh) * 7);
   position: relative;
-  border-top: 1px dotted #21211f;
   border-bottom: 1px dotted #21211f;
   text-align: center;
   display: flex;
@@ -579,5 +593,8 @@ export default {
 }
 .topoff {
   border-top: 0;
+}
+.CustomerModal-wrap-top-table-order {
+  border-bottom: 1px dotted #21211f;
 }
 </style>

@@ -31,7 +31,9 @@
         >
           <p>Talk</p>
         </div>
-        <div class="call"><p>Call</p></div>
+        <div class="call" @click="$store.dispatch('call_update')">
+          <p>Call</p>
+        </div>
       </div>
     </div>
 

@@ -33,7 +33,7 @@ MongoClient.connect(
         .toArray()
         .then(data => {
           if (data.length === 0) {
-            응답.send('틀려유');
+            응답.send('Wrong information');
           } else if (data[0].onoff == 1) {
             var b = [];
             db.collection('menu')
@@ -52,7 +52,7 @@ MongoClient.connect(
                 }, 500);
               });
           } else {
-            응답.send('돈내야지');
+            응답.send('Period is over');
           }
         });
     });
@@ -202,9 +202,7 @@ MongoClient.connect(
         },
         {
           $push: {
-            'table.$.orderlist': {
-              $each: 요청.body.payload,
-            },
+            'table.$.orderlist': 요청.body.payload,
           },
         },
         { upsert: true },
@@ -237,6 +235,100 @@ MongoClient.connect(
         function (에러, 결과) {
           응답.sendStatus(200);
           // db.collection('menu')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
+        }
+      );
+    });
+    app.post('/Cook', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+          'table.index': 요청.body.index,
+        },
+        {
+          $set: {
+            'table.$.cook': 요청.body.cook,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          응답.sendStatus(200);
+          // db.collection('table')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
+        }
+      );
+    });
+    app.post('/Orderlist_talk_clear', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+          'table.index': 요청.body.index,
+        },
+        {
+          $set: {
+            'table.$.orderlist': [],
+            'table.$.talk': [{ text: 'Welcome to #Dalha_min', index: 0 }],
+            'table.$.cook': 0,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          응답.sendStatus(200);
+          // db.collection('table')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
+        }
+      );
+    });
+    app.post('/Call', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+          'table.index': 요청.body.index,
+        },
+        {
+          $set: {
+            'table.$.call': 1,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          응답.sendStatus(200);
+          // db.collection('table')
+          //   .find({ _id: '1234' })
+          //   .toArray()
+          //   .then(a => {
+          //     응답.send(a);
+          //   });
+        }
+      );
+    });
+    app.post('/Call_del', function (요청, 응답) {
+      db.collection('table').updateOne(
+        {
+          _id: '1234',
+          'table.index': 요청.body.index,
+        },
+        {
+          $set: {
+            'table.$.call': 0,
+          },
+        },
+        { upsert: true },
+        function (에러, 결과) {
+          응답.sendStatus(200);
+          // db.collection('table')
           //   .find({ _id: '1234' })
           //   .toArray()
           //   .then(a => {

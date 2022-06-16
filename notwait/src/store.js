@@ -23,11 +23,15 @@ const store = createStore({
       review_index: 0,
       loading_modal: 1,
       owner_loading_modal: 0,
+      table_modal: 0,
+      table_index: 0,
+      qr_modal: 0,
       //index
       talk_index: 0,
       customer_id: 0,
       //etc
       percentage: 0,
+      blink: [],
     };
   },
   mutations: {
@@ -38,6 +42,25 @@ const store = createStore({
       state.code = payload.data[0]._id;
       state.menulist = payload.data[0].menu;
       state.table = payload.data[1].table;
+      var length = payload.data[1].table.length;
+      let i;
+      let v;
+      for (i = 0; i < length; i++) {
+        var length1 = state.table[i].orderlist.length;
+        var length2 = state.table[i].talk.length;
+        state.blink.push({
+          table: 0,
+          talk: 0,
+          table_order: [],
+          talk_order: [],
+        });
+        for (v = 0; v < length1; v++) {
+          state.blink[i].table_order.push({ order: 0 });
+        }
+        for (v = 0; v < length2; v++) {
+          state.blink[i].talk_order.push({ order: 0 });
+        }
+      }
     },
     customerlogin(state, payload) {
       state.menulist = payload.data[0];
@@ -76,10 +99,18 @@ const store = createStore({
       }
     },
     table_push(state, payload) {
-      state.table.push({ orderlist: [], talk: [], index: payload, cook: 0 });
+      state.table.push({
+        orderlist: [],
+        talk: [{ text: 'Welcome to #Dalha_min', index: 0 }],
+        index: payload,
+        cook: 0,
+        call: 0,
+      });
+      state.blink.push({ table: 0, talk: 0, table_order: [], talk_order: [] });
     },
     table_del(state) {
       state.table.pop();
+      state.blink.pop();
     },
     event_modalOnOff(state, payload) {
       if (state.event_modal == 1) {
@@ -125,6 +156,14 @@ const store = createStore({
       state.percentage = payload;
       state.owner_loading_modal = 1;
     },
+    table_modalOnOff(state, payload) {
+      if (state.table_modal == 1) {
+        state.table_modal = 0;
+      } else if (state.table_modal == 0) {
+        state.table_index = payload;
+        state.table_modal = 1;
+      }
+    },
     //sync
     customer_idsync(state, payload) {
       state.customer_id = payload;
@@ -141,8 +180,32 @@ const store = createStore({
     owner_talk_sync(state, payload) {
       var index = payload.index;
       var contents = Object.values(payload.data);
-      console.log(contents);
       state.table[index].talk.push(contents[0]);
+      if (contents[0].index == 1) {
+        state.blink[index].talk = 1;
+        state.blink[index].talk_order.push({ order: 1 });
+      } else if (contents[0].index == 0) {
+        state.blink[index].talk_order.push({ order: 0 });
+      }
+    },
+    owner_orderlist_sync(state, payload) {
+      if (state.table[payload.index].orderlist.length == 0) {
+        state.table[payload.index].orderlist.push(
+          Object.values(Object.values(payload.data)[0])[0]
+        );
+        state.blink[payload.index].table_order.push({ order: 1 });
+        state.blink[payload.index].table = 1;
+      } else {
+        state.blink[payload.index].table_order.push({ order: 1 });
+        state.blink[payload.index].table = 1;
+
+        state.table[payload.index].orderlist.push(
+          Object.values(payload.data)[0]
+        );
+      }
+    },
+    owner_cook_sync(state, payload) {
+      state.table[payload.index].cook = Object.values(payload.data)[0];
     },
     review_sync(state, payload) {
       var n = Object.keys(payload).toString();
@@ -150,14 +213,48 @@ const store = createStore({
       state.menulist[index].review.push(Object.values(payload)[0]);
     },
     orderlist_sync(state, payload) {
+      var firstlength = Object.values(Object.values(payload)[0]).length;
       var length = Object.values(payload).length;
       var num;
-      for (num = 0; num < length; num++) {
-        state.table.orderlist.push(Object.values(payload)[num]);
+      if (state.table.orderlist.length == 0) {
+        for (num = 0; num < firstlength; num++) {
+          state.table.orderlist.push(
+            Object.values(Object.values(payload)[0])[num]
+          );
+        }
+      } else {
+        for (num = 0; num < length; num++) {
+          state.table.orderlist.push(Object.values(payload)[num]);
+        }
       }
     },
     cook_sync(state, payload) {
       state.table.cook = Object.values(payload);
+    },
+    owner_clear(state) {
+      state.table[state.table_index].orderlist = [];
+      state.table[state.table_index].talk = [
+        { text: 'Welcome to #Dalha_min', index: 0 },
+      ];
+      state.table[state.table_index].call = 0;
+      state.table[state.table_index].cook = 0;
+      state.blink[state.table_index].table = 0;
+      state.blink[state.table_index].talk = 0;
+      state.blink[state.table_index].table_order = [];
+      state.blink[state.table_index].talk_order = [{ order: 0 }];
+    },
+    clear(state) {
+      state.table.orderlist = [];
+      state.table.talk = [{ text: 'Welcome to #Dalha_min', index: 0 }];
+      state.table.cook = 0;
+      state.table.call = 0;
+    },
+    owner_call(state, payload) {
+      if (Object.values(Object.values(payload.data))[0] == 1) {
+        state.table[payload.index].call = 1;
+      } else if (Object.values(Object.values(payload.data))[0] == 0) {
+        state.table[payload.index].call = 0;
+      }
     },
   },
   actions: {
@@ -190,11 +287,11 @@ const store = createStore({
         )
         .then(response => {
           if (response.data.length < 2) {
-            context.commit('owner_event_modalOnOff', '재접속바랍니다');
-          } else if (response.data == '틀려유') {
-            context.commit('owner_event_modalOnOff', '틀려유');
-          } else if (response.data == '돈내야지') {
-            context.commit('owner_event_modalOnOff', '돈내야지');
+            context.commit('owner_event_modalOnOff', 'Please reconnect');
+          } else if (response.data == 'Wrong information') {
+            context.commit('owner_event_modalOnOff', 'Wrong information');
+          } else if (response.data == 'Period is over') {
+            context.commit('owner_event_modalOnOff', 'Period is over');
           } else {
             context.commit('login', response);
           }
@@ -216,7 +313,7 @@ const store = createStore({
         )
         .then(response => {
           if (response.data.length < 2) {
-            context.commit('event_modalOnOff', '재접속바랍니다');
+            context.commit('event_modalOnOff', 'Please reconnect');
           } else {
             context.commit('customerlogin', response);
           }
@@ -226,33 +323,37 @@ const store = createStore({
       var send;
       send = { text: payload, index: this.state.talk_index, talkindex: 0 };
       axios.post('/Talkupdate', send);
-      // axios.post('/Talkupdate', send).then(response => {
-      //   context.commit('table_sync', response.data[0].table);
-      // });
     },
     customer_talk_update(commit, payload) {
       var send;
       send = { text: payload, index: this.state.customer_id - 1, talkindex: 1 };
       axios.post('/Talkupdate', send);
-      // axios.post('/Talkupdate', send).then(response => {
-      //   context.commit(
-      //     'table_sync',
-      //     response.data[0].table[this.state.customer_id - 1]
-      //   );
-      // });
     },
     orderlist_update(commit, payload) {
       var send = { index: this.state.customer_id, payload: payload };
       axios.post('/Orderlist', send);
-      // axios.post('/Orderlist', send).then(response => {
-      //   context.commit(
-      //     'table_sync',
-      //     response.data[0].table[this.state.customer_id - 1]
-      //   );
-      // });
+    },
+    orderlist_talk_clear() {
+      axios.post('/Orderlist_talk_clear', { index: this.state.table_index });
     },
     review_update(commit, payload) {
       axios.post('/Review', payload);
+    },
+    cook_update(commit, payload) {
+      if (this.state.table[payload.index].cook == 0) {
+        axios.post('/Cook', { index: payload.index, cook: 1 });
+      } else if (this.state.table[payload.index].cook == 1) {
+        axios.post('/Cook', { index: payload.index, cook: 2 });
+      } else if (this.state.table[payload.index].cook == 2) {
+        axios.post('/Cook', { index: payload.index, cook: 0 });
+      }
+    },
+    call_update(commit, payload) {
+      if (payload != undefined) {
+        axios.post('/Call_del', { index: payload.index });
+      } else {
+        axios.post('/Call', { index: this.state.customer_id - 1 });
+      }
     },
     owner_customer_update(context, payload) {
       console.log('실시간업데이트');
@@ -262,6 +363,8 @@ const store = createStore({
         var 문서 = JSON.parse(e.data);
         var n = Object.keys(문서).toString();
         let alpha = n.substr(0, 4);
+        var val = Object.keys(문서);
+
         if (alpha == 'menu') {
           let vet = n.substr(7, 6);
           if (vet == 'review') {
@@ -274,11 +377,21 @@ const store = createStore({
         } else if (alpha == 'tabl') {
           let vet = n.substr(8, 4);
           if (vet == 'talk') {
-            console.log('톡');
-            context.commit('talk_sync', Object.values(문서));
+            if (Object.values(문서)[0][0] != undefined) {
+              context.commit('clear');
+              console.log('클리어');
+            } else {
+              console.log('톡');
+              context.commit('talk_sync', Object.values(문서));
+            }
           } else if (vet == 'orde') {
-            console.log('주문');
-            context.commit('orderlist_sync', 문서);
+            if (val.length == 2 || Object.values(문서)[0].length == 0) {
+              context.commit('clear');
+              console.log('클리어');
+            } else {
+              console.log('주문');
+              context.commit('orderlist_sync', 문서);
+            }
           } else if (vet == 'cook') {
             console.log('요리상태');
             context.commit('cook_sync', 문서);
@@ -292,11 +405,33 @@ const store = createStore({
       eventSource.addEventListener('test', function (e) {
         var 문서 = JSON.parse(e.data);
         var n = Object.keys(문서.data).toString();
-        let alpha = n.substr(8, 3);
-        if (alpha == 'tal') {
-          context.commit('owner_talk_sync', 문서);
-        } else if (alpha == 'ord') {
-          console.log(문서);
+        var val = Object.keys(문서.data);
+        let alpha = n.substr(0, 4);
+        if (alpha == 'tabl') {
+          let vet = n.substr(8, 4);
+          if (vet == 'talk') {
+            if (Object.values(문서.data)[0][0] != undefined) {
+              context.commit('owner_clear');
+              console.log('클리어');
+            } else {
+              console.log('톡');
+              context.commit('owner_talk_sync', 문서);
+            }
+          } else if (vet == 'orde') {
+            if (val.length == 2 || Object.values(문서.data)[0].length == 0) {
+              context.commit('owner_clear');
+              console.log('클리어');
+            } else {
+              console.log('주문');
+              context.commit('owner_orderlist_sync', 문서);
+            }
+          } else if (vet == 'cook') {
+            console.log('쿡');
+            context.commit('owner_cook_sync', 문서);
+          } else if (vet == 'call') {
+            console.log('콜');
+            context.commit('owner_call', 문서);
+          }
         }
       });
     },

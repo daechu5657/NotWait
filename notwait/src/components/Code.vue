@@ -5,6 +5,7 @@
       type="password"
       v-model="send"
       spellcheck="false"
+      @keyup.enter="$store.dispatch('owner_login', this.send)"
     />
     <span class="code-submit" @click="$store.dispatch('owner_login', this.send)"
       >Login</span
@@ -88,22 +89,31 @@ export default {
   left: 45vw;
   top: 49vh;
   outline: none;
-  border: 0;
-  border-radius: 24px;
-  background-color: #838383;
+  background-color: #f0f0f0;
   text-align: center;
   font-size: 1.5vw;
   color: #21211f;
+  border-bottom: 2px dotted #21211f;
+  border-top: 0;
+  border-left: 0;
+  border-right: 0;
 }
 .code-submit {
   position: absolute;
-  width: 10vw;
+  width: 6vw;
   height: 3vh;
   font-size: 1vw;
-  left: 45vw;
+  left: 47vw;
   top: 53vh;
   text-align: center;
   line-height: 3vh;
+  transition: all 0.3s;
+  border: 1px dotted #21211f00;
+}
+.code-submit:hover {
+  border: 1px dotted #21211f;
+  padding: 0 1vw;
+  left: 46vw;
 }
 .code-loading-wrap {
   position: absolute;
