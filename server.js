@@ -28,28 +28,28 @@ MongoClient.connect(
       응답.sendFile(path.join(__dirname, '/notwait/dist/index.html'));
     });
     app.post('/Login', function (요청, 응답) {
+      var b = [];
       db.collection('code')
         .find({ _id: 요청.body.code })
         .toArray()
-        .then(data => {
+        .then(async data => {
           if (data.length === 0) {
             응답.send('Wrong information');
           } else if (data[0].onoff == 1) {
-            var b = [];
-            db.collection('menu')
+            await db
+              .collection('menu')
               .find({ _id: 요청.body.code })
               .toArray()
               .then(a => {
                 b.push(a[0]);
               });
-            db.collection('table')
+            await db
+              .collection('table')
               .find({ _id: 요청.body.code })
               .toArray()
               .then(a => {
-                setTimeout(() => {
-                  b.push(a[0]);
-                  응답.send(b);
-                }, 500);
+                b.push(a[0]);
+                응답.send(b);
               });
           } else {
             응답.send('Period is over');
@@ -57,25 +57,25 @@ MongoClient.connect(
         });
     });
     app.post('/LoginCustomer', function (요청, 응답) {
+      var b = [];
       db.collection('code')
         .find({ _id: 요청.body.code })
         .toArray()
-        .then(data => {
-          var b = [];
-          db.collection('menu')
+        .then(async data => {
+          await db
+            .collection('menu')
             .find({ _id: 요청.body.code })
             .toArray()
             .then(a => {
               b.push(a[0].menu);
             });
-          db.collection('table')
+          await db
+            .collection('table')
             .find({ _id: 요청.body.code })
             .toArray()
             .then(a => {
-              setTimeout(() => {
-                b.push(a[0].table[요청.body.table - 1]);
-                응답.send(b);
-              }, 500);
+              b.push(a[0].table[요청.body.table - 1]);
+              응답.send(b);
             });
         });
     });
