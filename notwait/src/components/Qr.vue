@@ -23,7 +23,8 @@ import printJS from 'print-js';
 export default {
   data() {
     return {
-      value: 'http://localhost:8080/Customer/',
+      value:
+        'http://notwait-env.eba-rczh4hhb.us-west-2.elasticbeanstalk.com/Customer/',
     };
   },
   components: {
