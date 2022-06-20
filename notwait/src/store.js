@@ -356,7 +356,6 @@ const store = createStore({
       }
     },
     owner_customer_update(context, payload) {
-      console.log('실시간업데이트');
       context.commit('customer_idsync', payload);
       var eventSource = new EventSource(`/Sync/${payload}`);
       eventSource.addEventListener('test', function (e) {
@@ -368,10 +367,8 @@ const store = createStore({
         if (alpha == 'menu') {
           let vet = n.substr(7, 6);
           if (vet == 'review') {
-            console.log('리뷰');
             context.commit('review_sync', 문서);
           } else {
-            console.log('메뉴리스트');
             context.commit('menulistSync', 문서);
           }
         } else if (alpha == 'tabl') {
@@ -379,28 +376,22 @@ const store = createStore({
           if (vet == 'talk') {
             if (Object.values(문서)[0][0] != undefined) {
               context.commit('clear');
-              console.log('클리어');
             } else {
-              console.log('톡');
               context.commit('talk_sync', Object.values(문서));
             }
           } else if (vet == 'orde') {
             if (val.length == 2 || Object.values(문서)[0].length == 0) {
               context.commit('clear');
-              console.log('클리어');
             } else {
-              console.log('주문');
               context.commit('orderlist_sync', 문서);
             }
           } else if (vet == 'cook') {
-            console.log('요리상태');
             context.commit('cook_sync', 문서);
           }
         }
       });
     },
     customer_owner_update(context) {
-      console.log('실시간업데이트오너');
       var eventSource = new EventSource('/Owner/Sync');
       eventSource.addEventListener('test', function (e) {
         var 문서 = JSON.parse(e.data);
@@ -412,24 +403,18 @@ const store = createStore({
           if (vet == 'talk') {
             if (Object.values(문서.data)[0][0] != undefined) {
               context.commit('owner_clear');
-              console.log('클리어');
             } else {
-              console.log('톡');
               context.commit('owner_talk_sync', 문서);
             }
           } else if (vet == 'orde') {
             if (val.length == 2 || Object.values(문서.data)[0].length == 0) {
               context.commit('owner_clear');
-              console.log('클리어');
             } else {
-              console.log('주문');
               context.commit('owner_orderlist_sync', 문서);
             }
           } else if (vet == 'cook') {
-            console.log('쿡');
             context.commit('owner_cook_sync', 문서);
           } else if (vet == 'call') {
-            console.log('콜');
             context.commit('owner_call', 문서);
           }
         }

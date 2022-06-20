@@ -138,12 +138,6 @@ MongoClient.connect(
           { upsert: true },
           function (에러, 결과) {
             응답.sendStatus(200);
-            // db.collection('table')
-            //   .find({ _id: '1234' })
-            //   .toArray()
-            //   .then(a => {
-            //     응답.send(a);
-            //   });
           }
         );
       }
@@ -154,6 +148,8 @@ MongoClient.connect(
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
       });
+      res.write('data: ' + JSON.stringify({ id: 요청.params.id }) + '\n\n');
+
       var 문서;
       const menu = db.collection('menu').watch();
       menu.on('change', result => {
@@ -180,6 +176,8 @@ MongoClient.connect(
         'Cache-Control': 'no-cache',
         Connection: 'keep-alive',
       });
+      res.write('data: ' + JSON.stringify({ id: 'owner' }) + '\n\n');
+
       var 문서2;
       const talk = db.collection('table').watch();
       talk.on('change', result => {
@@ -193,7 +191,6 @@ MongoClient.connect(
         res.write('data: }\n\n');
       });
     });
-    //owner=>customer 방향 싱크 반대방향싱크도 만들어야함(owner 수신이 필요함)
     app.post('/Orderlist', function (요청, 응답) {
       db.collection('table').updateOne(
         {
@@ -208,12 +205,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('table')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });
@@ -234,12 +225,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('menu')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });
@@ -257,12 +242,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('table')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });
@@ -282,12 +261,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('table')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });
@@ -305,12 +278,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('table')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });
@@ -328,12 +295,6 @@ MongoClient.connect(
         { upsert: true },
         function (에러, 결과) {
           응답.sendStatus(200);
-          // db.collection('table')
-          //   .find({ _id: '1234' })
-          //   .toArray()
-          //   .then(a => {
-          //     응답.send(a);
-          //   });
         }
       );
     });

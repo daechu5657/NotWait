@@ -57,7 +57,6 @@ import CustomerTalk from './CustomerTalk.vue';
 import EventModal from './EventModal.vue';
 import Loading from './Loading.vue';
 import Cooking from './Cooking.vue';
-// import axios from 'axios';
 
 export default {
   data() {
